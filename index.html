@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Sasha & Masha | Питание</title>
+  <script>
+    (function () {
+      var root = document.documentElement;
+      var apply = function () {
+        var narrow = window.matchMedia('(max-width: 768px)').matches;
+        var phoneUA = /Android|webOS|iPhone|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        var tabletUA = /iPad|Tablet|PlayBook|Silk/i.test(navigator.userAgent)
+          || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        var touchCoarse = window.matchMedia('(pointer: coarse)').matches;
+        var isPhone = narrow || ((phoneUA || (touchCoarse && window.innerWidth <= 1024)) && !tabletUA);
+        root.classList.toggle('is-mobile', isPhone);
+        root.classList.toggle('is-desktop', !isPhone);
+      };
+      apply();
+      window.matchMedia('(max-width: 768px)').addEventListener('change', apply);
+      window.addEventListener('orientationchange', function () { setTimeout(apply, 120); });
+      window.addEventListener('resize', apply);
+    })();
+  </script>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <button type="button" class="ghost hidden" id="backBtn">← Все рационы</button>
+      <div>
+        <p class="eyebrow">Питание на неделю</p>
+        <h1 id="pageTitle">Рационы для Маши и Саши</h1>
+      </div>
+      <button type="button" class="pill hidden" id="shoppingBtn">Список покупок</button>
+    </header>
+
+    <main>
+      <section id="homeView" class="home-view">
+        <div class="recipe-search-wrap" id="recipeSearchWrap">
+          <button type="button" class="recipe-search-trigger" id="recipeSearchToggle" aria-label="Поиск по ингредиентам" aria-expanded="false" aria-controls="recipeSearchPanel">
+            <svg class="recipe-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <div class="recipe-search-panel" id="recipeSearchPanel">
+            <form class="recipe-search-form" id="recipeSearchForm">
+              <input type="search" id="recipeSearch" class="recipe-search-input" placeholder="Ингредиент — овсянка, курица…" autocomplete="off" enterkeyhint="search" aria-label="Поиск по ингредиентам" aria-controls="recipeSearchSuggestions" aria-expanded="false" aria-autocomplete="list" />
+              <button type="submit" class="pill recipe-search-submit" id="recipeSearchSubmit">Найти</button>
+            </form>
+            <div id="recipeSearchSuggestions" class="recipe-search-suggestions hidden" role="listbox" aria-label="Блюда с этим ингредиентом"></div>
+          </div>
+        </div>
+        <div class="intro-card">
+          <div>
+            <p class="eyebrow">8 готовых недель</p>
+            <h2>Выберите рацион, а дальше сайт покажет меню, ингредиенты и закупку на двоих.</h2>
+            <p>Привет! Саша и Маша, я ваш план питания с разной граммовкой, лёгкими перекусами и готовкой основных блюд на несколько дней!</p>
+          </div>
+          <div class="intro-bubbles"><span>🥗</span><span>🍳</span><span>🛒</span></div>
+        </div>
+        <div class="weekly-filter" id="weeklyFilter">
+          <div>
+            <p class="eyebrow">Рацион недели</p>
+            <h3 id="filterTitle">Можно закрепить один рацион</h3>
+            <p id="filterText">Выбранный рацион сохранится в браузере и останется на стартовом экране при следующих открытиях сайта.</p>
+          </div>
+          <div class="filter-actions">
+            <select id="weeklySelect" aria-label="Выбрать рацион недели"></select>
+            <button type="button" class="pill" id="pinRationBtn">Закрепить</button>
+            <button type="button" class="ghost" id="resetFilterBtn">Сбросить фильтр</button>
+          </div>
+        </div>
+        <div class="home-actions">
+          <button class="home-action" id="favoritesBtn" type="button"><span>♡</span><strong>Избранное</strong><small id="favoritesCount">0 рецептов</small></button>
+          <button class="home-action" id="dailyPlanBtn" type="button"><span>☀️</span><strong>Рацион дня</strong><small>Собрать на 1 день</small></button>
+        </div>
+        <div id="rationGrid" class="ration-grid"></div>
+      </section>
+
+      <section id="rationView" class="ration-view hidden">
+        <div class="ration-hero">
+          <img id="rationHeroImg" alt="Обложка рациона" />
+          <div>
+            <p class="eyebrow" id="rationNumber"></p>
+            <h2 id="rationTitle"></h2>
+            <p id="rationSubtitle"></p>
+          </div>
+        </div>
+        <div id="dayTabs" class="day-tabs"></div>
+        <div class="content-grid">
+          <aside class="meal-panel">
+            <h3 id="selectedDayTitle"></h3>
+            <div id="mealButtons" class="meal-buttons"></div>
+          </aside>
+          <article id="mealDetail" class="meal-detail"></article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="shoppingDialog" class="shopping-dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">На двоих на неделю</p><h2 id="shoppingTitle">Список покупок</h2></div>
+      <button type="button" class="ghost" id="closeShopping">Закрыть</button>
+    </div>
+    <div id="shoppingList" class="shopping-list"></div>
+  </dialog>
+
+  <dialog id="favoritesDialog" class="shopping-dialog">
+    <div class="dialog-head">
+      <div><p class="eyebrow">Любимые рецепты</p><h2>Избранное</h2></div>
+      <button type="button" class="ghost" id="closeFavorites">Закрыть</button>
+    </div>
+    <div id="favoritesList" class="favorites-list"></div>
+  </dialog>
+
+  <dialog id="ingredientSearchDialog" class="shopping-dialog ingredient-search-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Поиск по ингредиентам</p>
+        <h2 id="ingredientSearchTitle">Результаты</h2>
+      </div>
+      <button type="button" class="ghost" id="closeIngredientSearch">Закрыть</button>
+    </div>
+    <div id="ingredientSearchList" class="ingredient-search-list"></div>
+  </dialog>
+
+  <dialog id="dailyDialog" class="shopping-dialog daily-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow" id="dailyDialogEyebrow">На основе избранного</p>
+        <h2 id="dailyDialogTitle">Предложение дневного рациона</h2>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="ghost hidden" id="dailyBackBtn">← К рациону</button>
+        <button type="button" class="pill" id="regenerateDaily">Собрать ещё</button>
+        <button type="button" class="ghost" id="closeDaily">Закрыть</button>
+      </div>
+    </div>
+    <div id="dailyPersonFilter" class="daily-person-filter-wrap"></div>
+    <div id="dailyPlan" class="daily-plan"></div>
+  </dialog>
+
+  <div id="bootError" class="boot-error hidden" role="alert">
+    <h2>Не удалось загрузить данные</h2>
+    <p>Откройте сайт через <strong>index.html</strong> и проверьте, что рядом лежат файлы <strong>data.js</strong>, <strong>app.js</strong> и <strong>styles.css</strong>.</p>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

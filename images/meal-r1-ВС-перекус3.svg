@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="Перекус 3: Перекус 3">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe3c2"/>
+      <stop offset="1" stop-color="#f8b7b7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="22" stdDeviation="24" flood-color="#6b4f5f" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="760" rx="54" fill="url(#bg)"/>
+  <circle cx="1020" cy="130" r="150" fill="#fff" opacity="0.35"/>
+  <circle cx="150" cy="620" r="190" fill="#fff" opacity="0.28"/>
+  <circle cx="910" cy="590" r="92" fill="#fff" opacity="0.20"/>
+  <text x="86" y="110" font-size="58">🍨</text>
+  <text x="1020" y="625" font-size="72">✨</text>
+  <g filter="url(#shadow)">
+    <rect x="156" y="118" width="888" height="504" rx="54" fill="#fffdfb" opacity="0.90"/>
+    <text x="600" y="314" text-anchor="middle" font-size="160">🍳</text>
+    <text x="600" y="404" text-anchor="middle" font-size="48" font-family="Arial, sans-serif" font-weight="700" fill="#5c4b51">Перекус 3</text>
+    <text x="600" y="462" text-anchor="middle" font-size="36" font-family="Arial, sans-serif" fill="#7a6269">Перекус 3</text>
+    <text x="600" y="516" text-anchor="middle" font-size="24" font-family="Arial, sans-serif" fill="#9a8089">Рацион 1 · Баланс на каждый день · Воскресенье</text>
+  </g>
+</svg>
