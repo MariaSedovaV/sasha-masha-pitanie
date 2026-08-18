@@ -463,7 +463,8 @@ function photoUrl(meal){
 }
 
 function renderHome(){
-  $('pageTitle').textContent = 'Sasha & Masha | Питание';
+  document.body.classList.add('on-home');
+  $('pageTitle').textContent = 'Рационы для Маши и Саши';
   backBtn.classList.add('hidden'); shoppingBtn.classList.add('hidden');
   homeView.classList.remove('hidden'); rationView.classList.add('hidden');
   if(state.pinnedId && !window.RATIONS.some(r => r.id === state.pinnedId)){
@@ -516,6 +517,7 @@ function resetWeeklyFilter(){
 }
 
 function openRation(id, dayIndex = 0, mealIndex = 0){
+  document.body.classList.remove('on-home');
   state.ration = window.RATIONS.find(r => r.id === id); state.dayIndex = dayIndex; state.mealIndex = mealIndex;
   homeView.classList.add('hidden'); rationView.classList.remove('hidden');
   backBtn.classList.remove('hidden'); shoppingBtn.classList.remove('hidden');
@@ -870,11 +872,27 @@ $('closeDaily').addEventListener('click', () => closeAppDialog($('dailyDialog'))
 $('regenerateDaily').addEventListener('click', regenerateDailyPlan);
 $('dailyBackBtn').addEventListener('click', backToDailyOverview);
 bindRecipeSearchHover();
+function currentTheme(){
+  return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
+}
+function applyTheme(theme){
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('sasha-theme', theme);
+  const btn = $('theme-toggle');
+  if(btn) btn.textContent = theme === 'light' ? 'Тёмная' : 'Светлая';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if(meta) meta.setAttribute('content', theme === 'light' ? '#f3eee4' : '#0b0c10');
+}
+
 function boot(){
   if(!window.RATIONS?.length){
     $('bootError')?.classList.remove('hidden');
     return;
   }
+  applyTheme(currentTheme());
+  $('theme-toggle')?.addEventListener('click', () => {
+    applyTheme(currentTheme() === 'light' ? 'dark' : 'light');
+  });
   renderHome();
 }
 boot();
