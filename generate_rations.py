@@ -15,10 +15,16 @@ from pathlib import Path
 SITE = Path(__file__).resolve().parent
 DATA_JS = SITE / "data.js"
 
-DAILY_RANGES = {
+DAILY_RANGES_GENERATE = {
     "Саша": {"Ккал": (2210, 2487), "Белки": (170, 182), "Жиры": (48, 56), "Углеводы": (285, 305)},
     "Маша": {"Ккал": (1640, 1845), "Белки": (124, 134), "Жиры": (38, 47), "Углеводы": (195, 212)},
 }
+DAILY_RANGES = {
+    "Саша": {"Ккал": (2210, 2487), "Белки": (195, 210), "Жиры": (48, 56), "Углеводы": (285, 305)},
+    "Маша": {"Ккал": (1640, 1845), "Белки": (124, 134), "Жиры": (38, 47), "Углеводы": (195, 212)},
+}
+SASHA_PROTEIN_TARGET = 200
+PROTEIN_DISH_RE = re.compile(r"(\d+)\s*г протеина", re.I)
 
 DAY_NAMES = {
     "ПН": "Понедельник", "ВТ": "Вторник", "СР": "Среда", "ЧТ": "Четверг",
@@ -123,6 +129,261 @@ EMOJIS = [
 ]
 
 FORBIDDEN = re.compile(r"аэрофрит|air\s*fryer|airfryer", re.I)
+TARGET_RATIONS = 23
+
+PHOTO_RULES = [
+    (re.compile(r"паста|спагетт|орзо|лазань"), "images/photo-pasta.jpg"),
+    (re.compile(r"фунчоз|лапш|стеклян"), "images/photo-funchoza.jpg"),
+    (re.compile(r"лосос|слабосолен"), "images/photo-salmon.jpg"),
+    (re.compile(r"суп|чечев"), "images/photo-soup.jpg"),
+    (re.compile(r"говяд"), "images/photo-beef.jpg"),
+    (re.compile(r"индейк"), "images/photo-turkey.jpg"),
+    (re.compile(r"куриц|тефтел|котлет"), "images/photo-chicken.jpg"),
+    (re.compile(r"рыб|хек|тунец|кревет|конвертик"), "images/photo-fish.jpg"),
+    (re.compile(r"тофу|нут"), "images/photo-tofu.jpg"),
+    (re.compile(r"запекан"), "images/photo-casserole.jpg"),
+    (re.compile(r"рикотт"), "images/photo-syrniki-ricotta.jpg"),
+    (re.compile(r"олад|сырник|маков|бейгл"), "images/photo-syrmiki.jpg"),
+    (re.compile(r"омлет|яичн|пашот|шакшук|тортиль|скрэмбл"), "images/photo-omelette.jpg"),
+    (re.compile(r"тост|бутерброд|авокадо|хачапур|лаваш|круасс|ветчин"), "images/photo-toast.jpg"),
+    (re.compile(r"овсян|каша|гречк.*яйц"), "images/photo-oatmeal.jpg"),
+    (re.compile(r"йогурт|мюсли|смузи"), "images/photo-yogurt.jpg"),
+    (re.compile(r"протеин"), "images/photo-snack-protein.jpg"),
+]
+PHOTO_FALLBACK = {
+    "Завтрак": "images/photo-oatmeal.jpg",
+    "Обед": "images/photo-chicken.jpg",
+    "Ужин": "images/photo-fish.jpg",
+    "Перекус 1": "images/photo-snack-fruit.jpg",
+    "Перекус 2": "images/photo-snack-protein.jpg",
+    "Перекус 3": "images/photo-snack-fruit.jpg",
+}
+FOCUS_CATS = [
+    ("рыба", ("лосос", "рыб", "тунец", "хек", "кревет"), "🐟"),
+    ("курица", ("куриц",), "🍗"),
+    ("индейка", ("индейк",), "🦃"),
+    ("говядина", ("говяд",), "🥩"),
+    ("овощи", ("брокколи", "кабач", "цукини", "шпинат", "салат", "тыква", "перец", "баклажан"), "🥦"),
+    ("крупы", ("греч", "рис", "киноа", "полб", "булгур", "овсян", "картофел", "фунчоз", "паст"), "🌾"),
+    ("молочка", ("творог", "кефир", "йогурт", "сыр"), "🥛"),
+]
+WEEK_THEMES = [
+    {"title": "Рыбная неделя", "subtitle": "Лосось, белая рыба и лёгкие овощные ужины", "prefer": ["рыба"]},
+    {"title": "Курица и булгур", "subtitle": "Запечённая курица, крупы и салаты на два дня", "prefer": ["курица"]},
+    {"title": "Индейка и гречка", "subtitle": "Тушёная индейка, гречневый плов и котлеты из духовки", "prefer": ["индейка"]},
+    {"title": "Средиземноморье", "subtitle": "Томаты, зелень, рыба и йогуртовые завтраки", "prefer": ["рыба", "молочка"]},
+    {"title": "Фунчоза и овощи", "subtitle": "Стеклянная лапша, индейка и яркие гарниры", "prefer": ["индейка", "овощи"]},
+    {"title": "Творожные завтраки", "subtitle": "Запеканки, сырники с рикоттой и овсяноблины с ягодами", "prefer": ["молочка"]},
+    {"title": "Боулы с киноа", "subtitle": "Курица, брокколи и киноа в контейнерах на два дня", "prefer": ["курица", "крупы"]},
+    {"title": "Говядина и корнеплоды", "subtitle": "Тушёная говядина, свёкла и овощные ужины", "prefer": ["говядина"]},
+    {"title": "Супы и заготовки", "subtitle": "Чечевичный суп, курица и тёплые овощи", "prefer": ["курица", "овощи"]},
+    {"title": "Яйца и зелень", "subtitle": "Омлеты, шакшука, шпинат и тосты", "prefer": ["молочка", "овощи"]},
+    {"title": "Тофу и тыква", "subtitle": "Растительный белок, тыква и лёгкие перекусы", "prefer": ["овощи"]},
+    {"title": "Картофель и рыба", "subtitle": "Запечённый картофель, хек и салаты", "prefer": ["рыба", "крупы"]},
+    {"title": "Домашние котлеты", "subtitle": "Индейка из духовки, гречка и тушёные овощи", "prefer": ["индейка"]},
+    {"title": "Лосось и лимон", "subtitle": "Красная рыба, брокколи и спокойные завтраки", "prefer": ["рыба"]},
+    {"title": "Полба и кимчи", "subtitle": "Сытные обеды с полбой, курицей и ферментами", "prefer": ["курица", "крупы"]},
+    {"title": "Осенние овощи", "subtitle": "Тыква, кабачки, индейка и творог", "prefer": ["овощи", "индейка"]},
+    {"title": "Белок без суеты", "subtitle": "Понятные блюда: курица, яйца, кефир и ягоды", "prefer": ["курица", "молочка"]},
+    {"title": "Зелёная тарелка", "subtitle": "Шпинат, брокколи, рыба и салаты на ужин", "prefer": ["овощи", "рыба"]},
+    {"title": "Комфортная классика", "subtitle": "Курица, картофель, творог и простые перекусы", "prefer": ["курица", "крупы"]},
+    {"title": "Паста с индейкой", "subtitle": "Запечённая паста со шпинатом, голубцы и курица под сыром из Notes", "prefer": ["индейка"]},
+    {"title": "Рыба из духовки", "subtitle": "Паста с лососем, конвертики с тунцом и рыба с овощами из Notes", "prefer": ["рыба"]},
+    {"title": "Курица под сыром", "subtitle": "Курица с моцареллой, салаты и заготовки из духовки по мотивам Notes", "prefer": ["курица"]},
+]
+
+
+def meal_photo(meal_type: str, dish: str) -> str:
+    text = f"{meal_type} {dish}".lower()
+    if str(meal_type).startswith("Перекус"):
+        if "яйц" in text:
+            return "images/photo-snack-egg.jpg"
+        if "тофу" in text:
+            return "images/photo-tofu.jpg"
+        if any(k in text for k in ("лосос", "рыб", "хек", "тунец", "кревет")):
+            return "images/photo-fish.jpg"
+        if "куриц" in text:
+            return "images/photo-chicken.jpg"
+        if "индейк" in text:
+            return "images/photo-turkey.jpg"
+        if "кефир" in text:
+            return "images/photo-snack-kefir.jpg"
+        if "протеин" in text:
+            return "images/photo-snack-protein.jpg"
+        return "images/photo-snack-fruit.jpg"
+    for rx, path in PHOTO_RULES:
+        if rx.search(text):
+            return path
+    return PHOTO_FALLBACK.get(meal_type, "images/photo-snack-fruit.jpg")
+
+
+def snack_title(dish: str) -> str:
+    t = (dish or "").lower()
+    if "тофу" in t:
+        if "тыкв" in t:
+            return "Тофу с тыквой"
+        if "кабач" in t:
+            return "Тофу с кабачками"
+        return "Тофу с овощами"
+    egg, kefir = "яйц" in t, "кефир" in t
+    peach, pear, apple = "персик" in t, "груш" in t, "яблок" in t
+    if egg and kefir and peach:
+        return "Яйцо с персиком и кефиром"
+    if egg and kefir and pear:
+        return "Яйцо с грушей и кефиром"
+    if egg and kefir and apple:
+        return "Яйцо с яблоком и кефиром"
+    if egg and peach:
+        return "Яйцо с персиком"
+    if egg and pear:
+        return "Яйцо с грушей"
+    if egg and kefir:
+        return "Яйцо с кефиром"
+    if egg:
+        return "Яйцо с фруктами"
+    if "куриц" in t:
+        return "Курица с тыквой"
+    if "индейк" in t:
+        return "Индейка с брокколи"
+    if any(k in t for k in ("рыб", "лосос", "тунец", "хек", "кревет")):
+        return "Рыба с овощами"
+    if "сорбет" in t:
+        return "Ягодный сорбет"
+    if kefir:
+        return "Кефир с фруктами"
+    if "протеин" in t:
+        return "Белковый перекус"
+    return "Лёгкий перекус"
+
+
+def recipe_title(meal_type: str, dish: str) -> str:
+    d = (dish or "").strip()
+    if str(meal_type).startswith("Перекус"):
+        return snack_title(d)
+    if ":" in d:
+        head = d.split(":", 1)[0].strip()
+        if head and not head[0].isdigit():
+            return head[0].upper() + head[1:]
+    first = re.sub(r"\s*\(.*\)", "", d.split("+")[0]).strip()
+    if first and first[:1].isalpha():
+        return first[0].upper() + first[1:]
+    t = d.lower()
+    pairs = [
+        (("фунчоз",), "Фунчоза с овощами"),
+        (("куриц", "картофел"), "Курица с картофелем и кимчи"),
+        (("куриц", "полб"), "Курица с полбой и салатом"),
+        (("куриц", "булгур"), "Курица с булгуром и салатом"),
+        (("куриц", "киноа"), "Киноа с курицей и брокколи"),
+        (("куриц",), "Запечённая курица с овощами"),
+        (("индейк", "греч"), "Тушёная индейка с гречкой"),
+        (("индейк", "котлет"), "Котлеты из индейки в духовке"),
+        (("индейк",), "Индейка с овощами"),
+        (("говяд",), "Говядина с овощами"),
+        (("лосос",), "Запечённый лосось с лимоном"),
+        (("рыб", "картофел"), "Рыба с запечённым картофелем"),
+        (("рыб", "рис"), "Рыба с рисом и брокколи"),
+        (("рыб",), "Запечённая рыба с овощами"),
+        (("чечев",), "Чечевичный суп"),
+        (("тофу",), "Тофу с тыквой"),
+        (("овсян",), "Овсянка с ягодами и яйцом"),
+        (("пашот",), "Яйца пашот со шпинатом"),
+        (("кефир",), "Кефир с фруктами"),
+        (("яйцо", "персик"), "Яйцо с персиком"),
+        (("сорбет",), "Ягодный сорбет"),
+        (("протеин",), "Белковый перекус"),
+    ]
+    for keys, name in pairs:
+        if all(k in t for k in keys):
+            return name
+    return meal_type
+
+
+def meal_tags(meal: dict) -> set[str]:
+    dish = (meal.get("dish") or {}).get("Саша") or ""
+    products = " ".join(i.get("product", "") for i in meal.get("ingredients") or [])
+    text = f"{dish} {products}".lower()
+    tags = set()
+    for name, keys, _emoji in FOCUS_CATS:
+        if any(k in text for k in keys):
+            tags.add(name)
+    return tags
+
+
+def ration_focus(ration: dict) -> list[dict]:
+    scores: dict[str, float] = defaultdict(float)
+    for day in ration.get("days") or []:
+        for meal in day.get("meals") or []:
+            meal_id = meal.get("id") or ""
+            weight = 3.0 if meal_id in ("Обед", "Ужин") else (1.0 if meal_id == "Завтрак" else 0.2)
+            for label in meal_tags(meal):
+                scores[label] += weight
+    protein = {"рыба", "курица", "индейка", "говядина", "молочка"}
+    protein_ranked = sorted(((k, v) for k, v in scores.items() if k in protein), key=lambda x: -x[1])
+    other_ranked = sorted(((k, v) for k, v in scores.items() if k not in protein), key=lambda x: -x[1])
+    ranked = protein_ranked[:1] + other_ranked[:2]
+    if len(ranked) < 3:
+        ranked += protein_ranked[1:]
+    ranked = ranked[:3]
+    emoji = {label: em for label, _keys, em in FOCUS_CATS}
+    if not ranked:
+        return [{"id": "овощи", "label": "овощи", "emoji": "🥦"}]
+    return [{"id": label, "label": label, "emoji": emoji[label]} for label, _score in ranked]
+
+
+def scored_choice(pool: list[dict], rng: random.Random, prefer: list[str] | None) -> dict:
+    if prefer:
+        tagged = [m for m in pool if meal_tags(m) & set(prefer)]
+        if tagged and rng.random() < 0.78:
+            return copy.deepcopy(rng.choice(tagged))
+    return copy.deepcopy(rng.choice(pool))
+
+
+def finalize_meal(meal: dict) -> dict:
+    dish = (meal.get("dish") or {}).get("Саша") or ""
+    meal_id = meal.get("id") or "Блюдо"
+    meal["title"] = recipe_title(meal_id, dish)
+    meal["image"] = meal_photo(meal_id, dish)
+    return meal
+
+
+FOCUS_TITLES = {
+    "рыба": ("Рыба", "Рыбные обеды и лёгкие овощные ужины"),
+    "курица": ("Курица", "Заготовки из курицы, крупы и салаты"),
+    "индейка": ("Индейка", "Нежная индейка и овощные гарниры"),
+    "говядина": ("Говядина", "Сытные мясные блюда и овощи"),
+    "молочка": ("Творог", "Белковые завтраки и спокойные основные блюда"),
+}
+
+def unique_title(ration: dict, used: set[str]) -> tuple[str, str]:
+    focus = ration.get("focus") or []
+    main = focus[0]["id"] if focus else "овощи"
+    second = focus[1]["label"] if len(focus) > 1 else ""
+    base, sub = FOCUS_TITLES.get(main, (ration.get("title") or "Неделя", ration.get("subtitle") or ""))
+    title = f"{base.split()[0]} и {second}" if second else base
+    title = title[0].upper() + title[1:]
+    n = 2
+    original = title
+    while title.lower() in used:
+        title = f"{original} {n}"
+        n += 1
+    used.add(title.lower())
+    extra = ", ".join(f["label"] for f in focus)
+    subtitle = f"Акцент недели: {extra}" if extra else sub
+    return title, subtitle
+
+
+def finalize_ration(ration: dict, used_titles: set[str] | None = None) -> dict:
+    for day in ration.get("days") or []:
+        for meal in day.get("meals") or []:
+            finalize_meal(meal)
+    ration["focus"] = ration_focus(ration)
+    rid = ration.get("id")
+    if rid and rid != 1:
+        theme = WEEK_THEMES[(rid - 2) % len(WEEK_THEMES)]
+        ration["title"] = theme["title"]
+        extras = ", ".join(f["label"] for f in ration.get("focus") or [])
+        ration["subtitle"] = f"{theme['subtitle']}" + (f" · в тарелке: {extras}" if extras else "")
+    return ration
 
 # Завтраки по мотивам Notes «Рецепты / Завтраки». Белок ≤40 г, углеводы/жиры смещены на первую половину дня.
 SYNTHETIC_MEALS = [
@@ -290,7 +551,125 @@ SYNTHETIC_MEALS = [
      "1 яйцо+80г груши+80г кефира",
      [("яйца", "шт", 2), ("груши", "г", 180), ("кефир", "г", 180)],
      {"Белки": 10, "Жиры": 2, "Углеводы": 28, "Ккал": 170}, {"Белки": 6, "Жиры": 2, "Углеводы": 20, "Ккал": 120}, "images/meal_yogurt_fruit_snack.png"),
+    ("Завтрак", "овсяноблин с творогом: 2 яйца+40г овсянки+120г творога+80г малины",
+     "овсяноблин с творогом: 2 яйца+30г овсянки+90г творога+60г малины",
+     [("яйца", "шт", 4), ("овсянка", "г", 70), ("творог 5%", "г", 210), ("малина", "г", 140)],
+     {"Белки": 32, "Жиры": 16, "Углеводы": 44, "Ккал": 430}, {"Белки": 26, "Жиры": 13, "Углеводы": 32, "Ккал": 340}, "images/photo-syrmiki.jpg"),
+    ("Завтрак", "греческий йогурт с чиа: 250г йогурта+15г чиа+100г черники+30г мюсли",
+     "греческий йогурт с чиа: 180г йогурта+10г чиа+80г черники+20г мюсли",
+     [("греческий йогурт", "г", 430), ("семена чиа", "г", 25), ("черника", "г", 180), ("мюсли", "г", 50)],
+     {"Белки": 28, "Жиры": 14, "Углеводы": 48, "Ккал": 420}, {"Белки": 22, "Жиры": 10, "Углеводы": 36, "Ккал": 320}, "images/photo-yogurt.jpg"),
+    ("Завтрак", "шакшука с тостом: 2 яйца+150г помидоров+80г перца+1 тост",
+     "шакшука с тостом: 2 яйца+120г помидоров+60г перца+1 тост",
+     [("яйца", "шт", 4), ("помидоры", "г", 270), ("болгарский перец", "г", 140), ("тосты", "шт", 2)],
+     {"Белки": 30, "Жиры": 16, "Углеводы": 40, "Ккал": 410}, {"Белки": 24, "Жиры": 13, "Углеводы": 30, "Ккал": 330}, "images/photo-omelette.jpg"),
+    ("Завтрак", "сырники с рикоттой: 100г творога+80г рикотты+1 яйцо+20г рисовой муки+80г черники",
+     "сырники с рикоттой: 70г творога+60г рикотты+1 яйцо+15г рисовой муки+60г черники",
+     [("творог 5%", "г", 170), ("рикотта", "г", 140), ("яйца", "шт", 2), ("рисовая мука", "г", 35), ("черника", "г", 140)],
+     {"Белки": 28, "Жиры": 14, "Углеводы": 42, "Ккал": 400}, {"Белки": 22, "Жиры": 11, "Углеводы": 32, "Ккал": 310}, "images/photo-syrniki-ricotta.jpg"),
+    ("Обед", "курица с булгуром и салатом: 170г курицы+80г булгура+150г огурца+150г помидоров",
+     "курица с булгуром и салатом: 125г курицы+55г булгура+120г огурца+120г помидоров",
+     [("курица", "г", 295), ("булгур", "г", 135), ("огурцы", "г", 270), ("помидоры", "г", 270)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 96, "Ккал": 620}, {"Белки": 28, "Жиры": 6, "Углеводы": 66, "Ккал": 440}, "images/photo-chicken.jpg"),
+    ("Обед", "плов из гречки с индейкой: 170г индейки+90г гречки+100г моркови+80г лука",
+     "плов из гречки с индейкой: 125г индейки+65г гречки+80г моркови+60г лука",
+     [("индейка", "г", 295), ("гречка", "г", 155), ("морковь", "г", 180), ("лук", "г", 140)],
+     {"Белки": 38, "Жиры": 9, "Углеводы": 94, "Ккал": 620}, {"Белки": 28, "Жиры": 7, "Углеводы": 62, "Ккал": 430}, "images/photo-turkey.jpg"),
+    ("Обед", "чечевичный суп с курицей: 140г курицы+80г чечевицы+150г помидоров+100г моркови",
+     "чечевичный суп с курицей: 100г курицы+55г чечевицы+120г помидоров+80г моркови",
+     [("курица", "г", 240), ("чечевица", "г", 135), ("помидоры", "г", 270), ("морковь", "г", 180)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 92, "Ккал": 610}, {"Белки": 28, "Жиры": 6, "Углеводы": 64, "Ккал": 430}, "images/photo-soup.jpg"),
+    ("Обед", "киноа с курицей и брокколи: 170г курицы+80г киноа+200г брокколи+80г перца",
+     "киноа с курицей и брокколи: 125г курицы+55г киноа+150г брокколи+60г перца",
+     [("курица", "г", 295), ("киноа", "г", 135), ("брокколи", "г", 350), ("болгарский перец", "г", 140)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 96, "Ккал": 620}, {"Белки": 28, "Жиры": 6, "Углеводы": 66, "Ккал": 440}, "images/photo-chicken.jpg"),
+    ("Обед", "фунчоза с индейкой и овощами: 165г индейки+60г фунчозы+150г перца+120г кабачка",
+     "фунчоза с индейкой и овощами: 120г индейки+45г фунчозы+120г перца+90г кабачка",
+     [("индейка", "г", 285), ("фунчоза", "г", 105), ("болгарский перец", "г", 270), ("цукини/кабачки", "г", 210)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 94, "Ккал": 610}, {"Белки": 28, "Жиры": 6, "Углеводы": 64, "Ккал": 430}, "images/photo-funchoza.jpg"),
+    ("Обед", "лосось с картофелем и салатом: 160г лосося+350г картофеля+150г огурца+100г салата",
+     "лосось с картофелем и салатом: 120г лосося+250г картофеля+120г огурца+80г салата",
+     [("лосось", "г", 280), ("картофель", "г", 600), ("огурцы", "г", 270), ("листовой салат", "г", 180)],
+     {"Белки": 38, "Жиры": 10, "Углеводы": 90, "Ккал": 620}, {"Белки": 28, "Жиры": 8, "Углеводы": 62, "Ккал": 440}, "images/photo-salmon.jpg"),
+    ("Ужин", "запечённый лосось с брокколи: 170г лосося+250г брокколи+100г шпината+лимон",
+     "запечённый лосось с брокколи: 125г лосося+180г брокколи+80г шпината+лимон",
+     [("лосось", "г", 295), ("брокколи", "г", 430), ("шпинат", "г", 180), ("лимон", "шт", 1)],
+     {"Белки": 38, "Жиры": 12, "Углеводы": 26, "Ккал": 390}, {"Белки": 28, "Жиры": 9, "Углеводы": 20, "Ккал": 300}, "images/photo-salmon.jpg"),
+    ("Ужин", "котлеты из индейки в духовке: 170г индейки+250г кабачков+150г салата+зелень",
+     "котлеты из индейки в духовке: 125г индейки+180г кабачков+120г салата+зелень",
+     [("индейка", "г", 295), ("цукини/кабачки", "г", 430), ("листовой салат", "г", 270), ("укроп", "г", 20)],
+     {"Белки": 38, "Жиры": 10, "Углеводы": 28, "Ккал": 390}, {"Белки": 28, "Жиры": 8, "Углеводы": 22, "Ккал": 300}, "images/photo-turkey.jpg"),
+    ("Ужин", "хек с кабачками и лимоном: 180г хека+280г кабачков+150г моркови+зелень",
+     "хек с кабачками и лимоном: 130г хека+200г кабачков+120г моркови+зелень",
+     [("хек", "г", 310), ("цукини/кабачки", "г", 480), ("морковь", "г", 270), ("укроп", "г", 20)],
+     {"Белки": 36, "Жиры": 8, "Углеводы": 26, "Ккал": 370}, {"Белки": 28, "Жиры": 6, "Углеводы": 20, "Ккал": 280}, "images/photo-fish.jpg"),
+    ("Ужин", "говядина со стручковой фасолью: 160г говядины+250г стручковой фасоли+150г кабачка",
+     "говядина со стручковой фасолью: 120г говядины+180г стручковой фасоли+120г кабачка",
+     [("говядина", "г", 280), ("стручковая фасоль", "г", 430), ("цукини/кабачки", "г", 270)],
+     {"Белки": 36, "Жиры": 12, "Углеводы": 28, "Ккал": 400}, {"Белки": 28, "Жиры": 9, "Углеводы": 22, "Ккал": 310}, "images/photo-beef.jpg"),
+    ("Завтрак", "творожные бейглы: 2 бейгла (160г творога+1 яйцо+40г рисовой муки)+80г малины",
+     "творожные бейглы: 1 бейгл (110г творога+1 яйцо+30г рисовой муки)+60г малины",
+     [("творог 5%", "г", 270), ("яйца", "шт", 2), ("рисовая мука", "г", 70), ("малина", "г", 140)],
+     {"Белки": 32, "Жиры": 15, "Углеводы": 46, "Ккал": 430}, {"Белки": 24, "Жиры": 12, "Углеводы": 34, "Ккал": 330}, "images/photo-syrmiki.jpg"),
+    ("Обед", "паста с индейкой, шпинатом и томатами: 165г индейки+70г пасты+150г томатов+40г шпината+20г кремчиза (духовка 200° 18 мин)",
+     "паста с индейкой, шпинатом и томатами: 120г индейки+50г пасты+120г томатов+30г шпината+15г кремчиза",
+     [("индейка", "г", 285), ("паста", "г", 120), ("помидоры", "г", 270), ("шпинат", "г", 70), ("кремчиз", "г", 35)],
+     {"Белки": 38, "Жиры": 9, "Углеводы": 94, "Ккал": 610}, {"Белки": 28, "Жиры": 7, "Углеводы": 64, "Ккал": 430}, "images/photo-pasta.jpg"),
+    ("Обед", "паста с лососем, шпинатом и томатами: 150г лосося+70г пасты+150г томатов+40г шпината",
+     "паста с лососем, шпинатом и томатами: 110г лосося+50г пасты+120г томатов+30г шпината",
+     [("лосось", "г", 260), ("паста", "г", 120), ("помидоры", "г", 270), ("шпинат", "г", 70)],
+     {"Белки": 38, "Жиры": 10, "Углеводы": 90, "Ккал": 620}, {"Белки": 28, "Жиры": 8, "Углеводы": 62, "Ккал": 440}, "images/photo-pasta.jpg"),
+    ("Обед", "курица с картофелем и помидором под моцареллой: 165г курицы+350г картофеля+150г помидоров+30г моцареллы (духовка)",
+     "курица с картофелем и помидором под моцареллой: 120г курицы+250г картофеля+120г помидоров+20г моцареллы",
+     [("курица", "г", 285), ("картофель", "г", 600), ("помидоры", "г", 270), ("моцарелла", "г", 50)],
+     {"Белки": 38, "Жиры": 9, "Углеводы": 92, "Ккал": 610}, {"Белки": 28, "Жиры": 7, "Углеводы": 64, "Ккал": 430}, "images/photo-chicken.jpg"),
+    ("Обед", "конвертики с тунцом: 2 конвертика (150г тунца+40г лаваша+30г рикотты)+300г картофеля+салат",
+     "конвертики с тунцом: 1 конвертик (110г тунца+30г лаваша+20г рикотты)+220г картофеля+салат",
+     [("тунец", "г", 260), ("лаваш", "г", 70), ("рикотта", "г", 50), ("картофель", "г", 520), ("листовой салат", "г", 160)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 94, "Ккал": 610}, {"Белки": 28, "Жиры": 6, "Углеводы": 64, "Ккал": 430}, "images/photo-fish.jpg"),
+    ("Обед", "ленивые голубцы: 165г индейки+80г риса+250г капусты+80г моркови (духовка)",
+     "ленивые голубцы: 120г индейки+55г риса+180г капусты+60г моркови",
+     [("индейка", "г", 285), ("рис", "г", 135), ("капуста", "г", 430), ("морковь", "г", 140)],
+     {"Белки": 38, "Жиры": 8, "Углеводы": 94, "Ккал": 610}, {"Белки": 28, "Жиры": 6, "Углеводы": 64, "Ккал": 430}, "images/photo-turkey.jpg"),
+    ("Ужин", "курица под кабачками, томатами и сыром: 165г курицы+250г кабачка+120г томатов+25г моцареллы",
+     "курица под кабачками, томатами и сыром: 120г курицы+180г кабачка+90г томатов+20г моцареллы",
+     [("курица", "г", 285), ("цукини/кабачки", "г", 430), ("помидоры", "г", 210), ("моцарелла", "г", 45)],
+     {"Белки": 38, "Жиры": 10, "Углеводы": 28, "Ккал": 390}, {"Белки": 28, "Жиры": 8, "Углеводы": 22, "Ккал": 300}, "images/photo-chicken.jpg"),
+    ("Ужин", "лосось запечённый под моцареллой: 160г лосося+30г моцареллы+250г брокколи+салат",
+     "лосось запечённый под моцареллой: 120г лосося+20г моцареллы+180г брокколи+салат",
+     [("лосось", "г", 280), ("моцарелла", "г", 50), ("брокколи", "г", 430), ("листовой салат", "г", 160)],
+     {"Белки": 36, "Жиры": 12, "Углеводы": 26, "Ккал": 380}, {"Белки": 28, "Жиры": 9, "Углеводы": 20, "Ккал": 290}, "images/photo-salmon.jpg"),
+    ("Ужин", "лазанья из баклажанов: 200г баклажана+140г индейки+80г томатов+25г моцареллы (духовка)",
+     "лазанья из баклажанов: 150г баклажана+100г индейки+60г томатов+20г моцареллы",
+     [("баклажаны", "г", 350), ("индейка", "г", 240), ("помидоры", "г", 140), ("моцарелла", "г", 45)],
+     {"Белки": 36, "Жиры": 11, "Углеводы": 28, "Ккал": 390}, {"Белки": 28, "Жиры": 8, "Углеводы": 22, "Ккал": 300}, "images/photo-pasta.jpg"),
+    ("Ужин", "салат с креветками и рукколой: 160г креветок+80г рукколы+150г огурца+100г томатов",
+     "салат с креветками и рукколой: 120г креветок+60г рукколы+120г огурца+80г томатов",
+     [("креветки", "г", 280), ("руккола", "г", 140), ("огурцы", "г", 270), ("помидоры", "г", 180)],
+     {"Белки": 36, "Жиры": 10, "Углеводы": 24, "Ккал": 360}, {"Белки": 28, "Жиры": 8, "Углеводы": 18, "Ккал": 280}, "images/photo-fish.jpg"),
+    ("Ужин", "сочная рыбка с овощами: 170г рыбы+200г кабачка+150г перца+100г помидоров (духовка)",
+     "сочная рыбка с овощами: 125г рыбы+150г кабачка+110г перца+80г помидоров",
+     [("рыба", "г", 295), ("цукини/кабачки", "г", 350), ("болгарский перец", "г", 260), ("помидоры", "г", 180)],
+     {"Белки": 36, "Жиры": 9, "Углеводы": 26, "Ккал": 370}, {"Белки": 28, "Жиры": 7, "Углеводы": 20, "Ккал": 290}, "images/photo-fish.jpg"),
 ]
+
+NOTES_FORCE = {
+    21: [
+        ("паста с индейкой", "курица под кабачками"),
+        ("ленивые голубцы", "лазанья из баклажанов"),
+        ("фунчоза с индейкой", "котлеты из индейки"),
+    ],
+    22: [
+        ("паста с лососем", "лосось запечённый под моцареллой"),
+        ("конвертики с тунцом", "сочная рыбка"),
+        ("лосось с картофелем", "салат с креветками"),
+    ],
+    23: [
+        ("курица с картофелем и помидором под моцареллой", "курица под кабачками"),
+        ("курица с булгуром", "салат с креветками"),
+        ("киноа с курицей", "хек с кабачками"),
+    ],
+}
 
 
 def load_rations() -> list:
@@ -319,7 +698,7 @@ def meal_fingerprint(meal: dict) -> str:
 
 def breakfast_category(meal: dict) -> str:
     d = (meal.get("dish") or {}).get("Саша", "").lower()
-    if any(x in d for x in ("олад", "пирож", "хачап", "запекан", "круасс")):
+    if any(x in d for x in ("олад", "пирож", "хачап", "запекан", "круасс", "сырник", "бейгл")):
         return "baked"
     if any(x in d for x in ("тост", "бутерброд", "лаваш", "круасс")):
         return "toast"
@@ -344,24 +723,27 @@ def normalize_meal(raw: dict) -> dict | None:
         "dish": {"Саша": dish.get("Саша", ""), "Маша": dish.get("Маша", "")},
         "ingredients": copy.deepcopy(raw.get("ingredients") or []),
         "macros": copy.deepcopy(raw["macros"]),
-        "image": raw.get("image") or IMAGE_BY_TYPE.get(raw["id"], "images/meal_grain_bowl.png"),
+        "image": meal_photo(raw["id"], dish.get("Саша", "")),
     }
     q = raw.get("photoQuery") or PHOTO_QUERY.get(raw["id"], "healthy food")
     meal["photoQuery"] = q
+    meal["title"] = recipe_title(raw["id"], dish.get("Саша", ""))
     meal["photo"] = raw.get("photo") or f"https://source.unsplash.com/900x650/?{urllib.parse.quote(q.replace(' ', '%20'))}"
     return meal
 
 
 def synthetic_to_meal(row) -> dict:
-    meal_type, ds, dm, ingredients, ms, mm, image = row
+    meal_type, ds, dm, ingredients, ms, mm, _image = row
     ing = [{"product": p, "unit": u, "amount": a} for p, u, a in ingredients]
     q = PHOTO_QUERY.get(meal_type, "healthy food")
     return {
-        "id": meal_type, "title": meal_type,
+        "id": meal_type,
+        "title": recipe_title(meal_type, ds),
         "dish": {"Саша": ds, "Маша": dm},
         "ingredients": ing,
         "macros": {"Саша": ms, "Маша": mm},
-        "image": image, "photoQuery": q,
+        "image": meal_photo(meal_type, ds),
+        "photoQuery": q,
         "photo": f"https://source.unsplash.com/900x650/?{urllib.parse.quote(q.replace(' ', '%20'))}",
     }
 
@@ -379,7 +761,9 @@ def macro_distribution_ok(meals: list[dict]) -> bool:
         first = {"Жиры": 0, "Углеводы": 0}
         second = {"Жиры": 0, "Углеводы": 0}
         for meal in meals:
-            macros = meal["macros"][person]
+            macros = (meal.get("macros") or {}).get(person)
+            if not macros:
+                continue
             bucket = first if meal["id"] in FIRST_HALF_MEALS else second
             bucket["Жиры"] += macros["Жиры"]
             bucket["Углеводы"] += macros["Углеводы"]
@@ -424,19 +808,73 @@ def sum_macros(meals: list[dict], person: str) -> dict[str, int]:
     return total
 
 
-def in_range(totals: dict[str, int], person: str) -> bool:
-    for key, (lo, hi) in DAILY_RANGES[person].items():
+def in_range(totals: dict[str, int], person: str, ranges: dict | None = None) -> bool:
+    table = ranges or DAILY_RANGES
+    for key, (lo, hi) in table[person].items():
         if not (lo <= totals[key] <= hi):
             return False
     return True
 
 
-def day_valid(meals: list[dict]) -> bool:
+def day_valid(meals: list[dict], ranges: dict | None = None) -> bool:
     if not all(meal_protein_ok(m) for m in meals):
         return False
     if not macro_distribution_ok(meals):
         return False
-    return in_range(sum_macros(meals, "Саша"), "Саша") and in_range(sum_macros(meals, "Маша"), "Маша")
+    check = ranges or DAILY_RANGES_GENERATE
+    return in_range(sum_macros(meals, "Саша"), "Саша", check) and in_range(sum_macros(meals, "Маша"), "Маша", check)
+
+
+def add_sasha_protein_to_meal(meal: dict, protein_g: int) -> int:
+    """Add existing product (протеин) to Sasha only. Mash portions and other macros stay as-is."""
+    if protein_g <= 0:
+        return 0
+    grams = max(5, int(round(protein_g * 30 / 24 / 5.0) * 5))
+    dish = meal["dish"].get("Саша") or ""
+    match = PROTEIN_DISH_RE.search(dish)
+    if match:
+        meal["dish"]["Саша"] = dish[: match.start()] + f"{int(match.group(1)) + grams}г протеина" + dish[match.end() :]
+    else:
+        meal["dish"]["Саша"] = f"{dish}+{grams}г протеина" if dish else f"{grams}г протеина"
+    ingredients = meal.setdefault("ingredients", [])
+    for ing in ingredients:
+        if ing.get("product") == "протеин" and ing.get("unit") == "г":
+            ing["amount"] = int(round(float(ing["amount"]) + grams))
+            break
+    else:
+        ingredients.append({"product": "протеин", "unit": "г", "amount": grams})
+    meal["macros"]["Саша"]["Белки"] = meal["macros"]["Саша"].get("Белки", 0) + protein_g
+    return grams
+
+
+def boost_sasha_protein_day(meals: list[dict], target: int = SASHA_PROTEIN_TARGET) -> None:
+    current = sum_macros(meals, "Саша")["Белки"]
+    needed = target - current
+    if needed <= 0:
+        return
+    candidates = sorted(
+        [m for m in meals if (m.get("macros") or {}).get("Саша")],
+        key=lambda m: (0 if str(m.get("id", "")).startswith("Перекус") else 1, m["macros"]["Саша"]["Белки"]),
+    )
+    remaining = needed
+    for meal in candidates:
+        room = MAX_PROTEIN - meal["macros"]["Саша"]["Белки"]
+        if room <= 0:
+            continue
+        add = min(room, remaining)
+        add_sasha_protein_to_meal(meal, add)
+        remaining -= add
+        if remaining <= 0:
+            return
+    if remaining > 0 and candidates:
+        add_sasha_protein_to_meal(candidates[0], remaining)
+
+
+def boost_rations_sasha_protein(rations: list) -> None:
+    for ration in rations:
+        for day in ration.get("days") or []:
+            boost_sasha_protein_day(day.get("meals") or [])
+        ration["shopping"] = build_shopping(ration.get("days") or [])
 
 
 def add_protein_powder(meal: dict, grams: int = 30) -> dict | None:
@@ -462,36 +900,27 @@ def tune_day_meals(meals: list[dict], pool: dict | None = None) -> list[dict] | 
         return meals
     if not pool:
         return None
-
     snack_idx = [i for i, m in enumerate(meals) if m["id"].startswith("Перекус")]
-    snack_options = [pool["Перекус 1"], pool["Перекус 2"], pool["Перекус 3"]]
-
-    for combo in itertools.product(*snack_options):
+    combos = list(itertools.product(pool["Перекус 1"], pool["Перекус 2"], pool["Перекус 3"]))
+    random.shuffle(combos)
+    for combo in combos[:48]:
         trial = copy.deepcopy(meals)
         for idx, snack in zip(snack_idx, combo):
             trial[idx] = copy.deepcopy(snack)
         if day_valid(trial):
             return trial
+    for combo in combos[:12]:
+        trial = copy.deepcopy(meals)
+        for idx, snack in zip(snack_idx, combo):
+            trial[idx] = copy.deepcopy(snack)
         for idx in snack_idx:
-            for grams in (15, 30, 45):
-                boosted = add_protein_powder(trial[idx], grams)
-                if not boosted:
-                    continue
-                trial2 = copy.deepcopy(trial)
-                trial2[idx] = boosted
-                if day_valid(trial2):
-                    return trial2
-                for idx2 in snack_idx:
-                    if idx2 == idx:
-                        continue
-                    for grams2 in (15, 30):
-                        boosted2 = add_protein_powder(trial2[idx2], grams2)
-                        if not boosted2:
-                            continue
-                        trial3 = copy.deepcopy(trial2)
-                        trial3[idx2] = boosted2
-                        if day_valid(trial3):
-                            return trial3
+            boosted = add_protein_powder(trial[idx], 30)
+            if not boosted:
+                continue
+            trial2 = copy.deepcopy(trial)
+            trial2[idx] = boosted
+            if day_valid(trial2):
+                return trial2
     return None
 
 
@@ -501,47 +930,66 @@ def pick_breakfast(pool: list[dict], rng: random.Random, avoid: set[str] | None 
     return copy.deepcopy(rng.choice(candidates))
 
 
-def find_shared_snacks(b1: dict, b2: dict, lunch: dict, dinner: dict, pool: dict) -> list[dict] | None:
+def find_shared_snacks(b1: dict, b2: dict, lunch: dict, dinner: dict, pool: dict, rng: random.Random) -> list[dict] | None:
     """Pick snacks that satisfy KBJU for both breakfasts in a batch-cooking pair."""
-    for combo in itertools.product(pool["Перекус 1"], pool["Перекус 2"], pool["Перекус 3"]):
+    combos = list(itertools.product(pool["Перекус 1"], pool["Перекус 2"], pool["Перекус 3"]))
+    rng.shuffle(combos)
+    for combo in combos[:48]:
         snacks = [copy.deepcopy(s) for s in combo]
         fixed = [lunch, dinner] + snacks
         if day_valid([copy.deepcopy(b1)] + fixed) and day_valid([copy.deepcopy(b2)] + fixed):
             return snacks
+    for combo in combos[:18]:
+        snacks = [copy.deepcopy(s) for s in combo]
         for idx in range(3):
-            for grams in (15, 30, 45):
-                trial_snacks = copy.deepcopy(snacks)
-                boosted = add_protein_powder(trial_snacks[idx], grams)
-                if not boosted:
-                    continue
-                trial_snacks[idx] = boosted
-                fixed = [lunch, dinner] + trial_snacks
-                if day_valid([copy.deepcopy(b1)] + fixed) and day_valid([copy.deepcopy(b2)] + fixed):
-                    return trial_snacks
-            for idx2 in range(3):
-                if idx2 == idx:
-                    continue
-                for grams2 in (15, 30):
-                    trial_snacks = copy.deepcopy(snacks)
-                    b1st = add_protein_powder(trial_snacks[idx], 30)
-                    b2nd = add_protein_powder(trial_snacks[idx2], grams2)
-                    if not b1st or not b2nd:
-                        continue
-                    trial_snacks[idx] = b1st
-                    trial_snacks[idx2] = b2nd
-                    fixed = [lunch, dinner] + trial_snacks
-                    if day_valid([copy.deepcopy(b1)] + fixed) and day_valid([copy.deepcopy(b2)] + fixed):
-                        return trial_snacks
+            boosted = add_protein_powder(snacks[idx], 30)
+            if not boosted:
+                continue
+            trial = copy.deepcopy(snacks)
+            trial[idx] = boosted
+            fixed = [lunch, dinner] + trial
+            if day_valid([copy.deepcopy(b1)] + fixed) and day_valid([copy.deepcopy(b2)] + fixed):
+                return trial
     return None
 
 
-def pick_block(pool: dict, rng: random.Random) -> dict | None:
-    for _ in range(80):
-        lunch = copy.deepcopy(rng.choice(pool["Обед"]))
-        dinner = copy.deepcopy(rng.choice(pool["Ужин"]))
+def meal_by_substring(pool: dict, meal_type: str, needle: str) -> dict | None:
+    needle = (needle or "").lower()
+    for meal in pool.get(meal_type) or []:
+        dish = ((meal.get("dish") or {}).get("Саша") or "").lower()
+        if needle in dish:
+            return copy.deepcopy(meal)
+    return None
+
+
+def pick_block_forced(pool: dict, rng: random.Random, lunch: dict, dinner: dict) -> dict | None:
+    for _ in range(40):
         b1 = pick_breakfast(pool["Завтрак"], rng)
         b2 = pick_breakfast(pool["Завтрак"], rng, avoid={breakfast_category(b1)})
-        snacks = find_shared_snacks(b1, b2, lunch, dinner, pool)
+        snacks = find_shared_snacks(b1, b2, lunch, dinner, pool, rng)
+        if not snacks:
+            continue
+        return {
+            "block": {
+                "Обед": copy.deepcopy(lunch),
+                "Ужин": copy.deepcopy(dinner),
+                "Перекус 1": snacks[0],
+                "Перекус 2": snacks[1],
+                "Перекус 3": snacks[2],
+            },
+            "breakfasts": (copy.deepcopy(b1), copy.deepcopy(b2)),
+        }
+    return None
+
+
+def pick_block(pool: dict, rng: random.Random, prefer: list[str] | None = None) -> dict | None:
+    for attempt in range(50):
+        prefer_now = prefer if attempt < 28 else None
+        lunch = scored_choice(pool["Обед"], rng, prefer_now)
+        dinner = scored_choice(pool["Ужин"], rng, prefer_now)
+        b1 = pick_breakfast(pool["Завтрак"], rng)
+        b2 = pick_breakfast(pool["Завтрак"], rng, avoid={breakfast_category(b1)})
+        snacks = find_shared_snacks(b1, b2, lunch, dinner, pool, rng)
         if not snacks:
             continue
         block = {
@@ -580,19 +1028,52 @@ def build_shopping(days: list[dict]) -> list[dict]:
     )
 
 
-def generate_ration(rid: int, pool: dict, rng: random.Random) -> dict | None:
+def pick_block_from_keys(pool: dict, rng: random.Random, lunch_key: str, dinner_key: str) -> dict | None:
+    lunch = meal_by_substring(pool, "Обед", lunch_key)
+    dinner = meal_by_substring(pool, "Ужин", dinner_key)
+    if not lunch or not dinner:
+        return None
+    return pick_block_forced(pool, rng, lunch, dinner)
+
+
+def generate_ration(rid: int, pool: dict, rng: random.Random, theme: dict | None = None, forced_blocks: list | None = None) -> dict | None:
+    theme = theme or {}
+    prefer = theme.get("prefer") or []
+    notes_lunches = [k for pair in NOTES_FORCE.values() for k, _ in pair]
+    notes_dinners = [k for pair in NOTES_FORCE.values() for _, k in pair]
     blocks, used_fps = [], set()
-    for _ in range(3):
-        blk = pick_block(pool, rng)
+    for i in range(3):
+        blk = None
+        if forced_blocks and i < len(forced_blocks):
+            lunch_key, dinner_key = forced_blocks[i]
+            blk = pick_block_from_keys(pool, rng, lunch_key, dinner_key)
+            if not blk:
+                for alt_dinner in rng.sample(notes_dinners, k=min(5, len(notes_dinners))):
+                    if alt_dinner == dinner_key:
+                        continue
+                    blk = pick_block_from_keys(pool, rng, lunch_key, alt_dinner)
+                    if blk:
+                        break
+            if not blk:
+                for alt_lunch in rng.sample(notes_lunches, k=min(5, len(notes_lunches))):
+                    blk = pick_block_from_keys(pool, rng, alt_lunch, dinner_key)
+                    if blk:
+                        break
+        if not blk:
+            blk = pick_block(pool, rng, prefer)
         if not blk:
             return None
         blocks.append(blk)
         for m in blk["block"].values():
             used_fps.add(meal_fingerprint(m))
+        lunch_fps = [meal_fingerprint(b["block"]["Обед"]) for b in blocks]
+        if len(set(lunch_fps)) < len(lunch_fps):
+            return None
     sunday = pick_sunday(pool, used_fps, rng)
     if not sunday:
         return None
-    title, subtitle = TITLES[(rid - 2) % len(TITLES)]
+    title = theme.get("title") or TITLES[(rid - 2) % len(TITLES)][0]
+    subtitle = theme.get("subtitle") or TITLES[(rid - 2) % len(TITLES)][1]
     color, emoji = COLORS[(rid - 1) % len(COLORS)], EMOJIS[(rid - 1) % len(EMOJIS)]
     days = []
     for d1, d2, bi in BLOCKS:
@@ -610,13 +1091,10 @@ def generate_ration(rid: int, pool: dict, rng: random.Random) -> dict | None:
 def validate_all(rations: list) -> dict:
     report = {"count": len(rations), "failures": [], "protein_failures": [], "distribution_failures": [], "air_fryer": []}
     for r in rations:
-        skip = r["id"] == 1
         for day in r["days"]:
             for person in ("Саша", "Маша"):
-                if not in_range(sum_macros(day["meals"], person), person) and not skip:
+                if not in_range(sum_macros(day["meals"], person), person):
                     report["failures"].append(f"ration {r['id']} {day['id']} {person}")
-            if skip:
-                continue
             for meal in day["meals"]:
                 if not meal_protein_ok(meal):
                     report["protein_failures"].append(f"ration {r['id']} {day['id']} {meal['id']}")
@@ -629,33 +1107,133 @@ def write_data_js(rations: list) -> None:
     DATA_JS.write_text(f"window.RATIONS = {json.dumps(rations, ensure_ascii=False, indent=2)};\n", encoding="utf-8")
 
 
-def main() -> None:
-    rng = random.Random(42)
-    existing = load_rations()
-    ration1 = copy.deepcopy(existing[0])
-    pool = build_meal_pool([ration1])
-    print("Meal pool sizes:", {k: len(v) for k, v in pool.items()})
-    print("Breakfast categories:", {c: sum(1 for m in pool["Завтрак"] if breakfast_category(m) == c) for c in ("baked", "toast", "yogurt", "eggs", "porridge", "other")})
-    new_rations, rid, attempts = [ration1], 2, 0
-    while rid <= 50 and attempts < 8000:
-        attempts += 1
-        ration = generate_ration(rid, pool, rng)
-        if ration:
-            new_rations.append(ration)
-            print(f"Generated ration {rid}: {ration['title']}")
-            rid += 1
-    if rid <= 50:
-        raise SystemExit(f"Failed to generate all rations, stuck at {rid}")
-    report = validate_all(new_rations)
-    write_data_js(new_rations)
+def print_report(rations: list) -> None:
+    report = validate_all(rations)
     size = DATA_JS.stat().st_size
     print("\n=== VALIDATION ===")
     print(f"Rations: {report['count']}")
     print(f"File size: {size / 1024 / 1024:.2f} MB")
     print(f"KBJU failures: {len(report['failures'])}")
+    if report["failures"][:8]:
+        print("  ", *report["failures"][:8], sep="\n  ")
     print(f"Protein > {MAX_PROTEIN}g failures: {len(report['protein_failures'])}")
     print(f"Macro distribution failures: {len(report['distribution_failures'])}")
+    sasha_p, masha_p = [], []
+    for ration in rations:
+        for day in ration["days"]:
+            sasha_p.append(sum_macros(day["meals"], "Саша")["Белки"])
+            masha_p.append(sum_macros(day["meals"], "Маша")["Белки"])
+    print(f"Sasha protein min/avg/max: {min(sasha_p)} / {sum(sasha_p)/len(sasha_p):.1f} / {max(sasha_p)}")
+    print(f"Masha protein min/avg/max: {min(masha_p)} / {sum(masha_p)/len(masha_p):.1f} / {max(masha_p)}")
+
+
+def boost_existing() -> None:
+    rations = load_rations()
+    boost_rations_sasha_protein(rations)
+    write_data_js(rations)
+    print_report(rations)
+
+
+def patch_syrniki_meals(rations: list) -> None:
+    for ration in rations:
+        changed = False
+        for day in ration.get("days") or []:
+            for meal in day.get("meals") or []:
+                dish = meal.get("dish") or {}
+                sasha = dish.get("Саша") or ""
+                masha = dish.get("Маша") or ""
+                if "сырники в духовке" not in sasha and "сырники в духовке" not in masha:
+                    continue
+                dish["Саша"] = "сырники с рикоттой: 100г творога+80г рикотты+1 яйцо+20г рисовой муки+80г черники"
+                dish["Маша"] = "сырники с рикоттой: 70г творога+60г рикотты+1 яйцо+15г рисовой муки+60г черники"
+                ingredients = meal.setdefault("ingredients", [])
+                found_ricotta = False
+                for ing in ingredients:
+                    if ing.get("product") == "творог 5%" and ing.get("unit") == "г":
+                        ing["amount"] = 170
+                    if ing.get("product") == "рикотта":
+                        found_ricotta = True
+                        ing["amount"] = 140
+                if not found_ricotta:
+                    ingredients.append({"product": "рикотта", "unit": "г", "amount": 140})
+                changed = True
+        if changed:
+            ration["shopping"] = build_shopping(ration.get("days") or [])
+
+
+def append_extra_rations() -> None:
+    rations = load_rations()
+    patch_syrniki_meals(rations)
+    pool = build_meal_pool(rations)
+    rng = random.Random(101)
+    start = max(r["id"] for r in rations) + 1
+    new_ones = []
+    rid, attempts = start, 0
+    while rid <= TARGET_RATIONS and attempts < 4000:
+        attempts += 1
+        if attempts % 50 == 0:
+            print(f"still generating ration {rid}, attempt {attempts}", flush=True)
+        attempts += 1
+        theme = WEEK_THEMES[(rid - 2) % len(WEEK_THEMES)]
+        ration = generate_ration(rid, pool, rng, theme, NOTES_FORCE.get(rid))
+        if ration:
+            new_ones.append(ration)
+            print(f"Generated ration {rid}: {ration['title']}", flush=True)
+            rid += 1
+    if rid <= TARGET_RATIONS:
+        raise SystemExit(f"Failed to generate extra rations, stuck at {rid}")
+    boost_rations_sasha_protein(new_ones)
+    rations.extend(new_ones)
+    used_titles = set()
+    for ration in rations:
+        finalize_ration(ration, used_titles)
+    write_data_js(rations)
+    print_report(rations)
+
+
+def main() -> None:
+    rng = random.Random(42)
+    existing = load_rations()
+    ration1 = finalize_ration(copy.deepcopy(existing[0]))
+    pool = build_meal_pool([ration1])
+    print("Meal pool sizes:", {k: len(v) for k, v in pool.items()}, flush=True)
+    print("Breakfast categories:", {c: sum(1 for m in pool["Завтрак"] if breakfast_category(m) == c) for c in ("baked", "toast", "yogurt", "eggs", "porridge", "other")}, flush=True)
+    new_rations, rid, attempts = [ration1], 2, 0
+    while rid <= TARGET_RATIONS and attempts < 8000:
+        attempts += 1
+        theme = WEEK_THEMES[(rid - 2) % len(WEEK_THEMES)]
+        ration = generate_ration(rid, pool, rng, theme)
+        if ration:
+            new_rations.append(ration)
+            print(f"Generated ration {rid}: {ration['title']}", flush=True)
+            rid += 1
+    if rid <= TARGET_RATIONS:
+        raise SystemExit(f"Failed to generate all rations, stuck at {rid}")
+    boost_rations_sasha_protein(new_rations)
+    used_titles = set()
+    for ration in new_rations:
+        finalize_ration(ration, used_titles)
+    write_data_js(new_rations)
+    print_report(new_rations)
+
+
+def finalize_existing() -> None:
+    rations = load_rations()
+    patch_syrniki_meals(rations)
+    used_titles = set()
+    for ration in rations:
+        finalize_ration(ration, used_titles)
+    write_data_js(rations)
+    print_report(rations)
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+    if "--boost-existing" in sys.argv:
+        boost_existing()
+    elif "--finalize" in sys.argv:
+        finalize_existing()
+    elif "--append-extra" in sys.argv:
+        append_extra_rations()
+    else:
+        main()

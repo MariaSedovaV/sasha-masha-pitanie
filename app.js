@@ -27,7 +27,7 @@ function closeAppDialog(el){
 const STORAGE_KEY = 'sasha-masha-weekly-ration';
 const FAVORITES_KEY = 'sasha-masha-favorite-recipes';
 const DAILY_RANGES = {
-  'Саша': { Ккал: [2210, 2487], Белки: [170, 182], Жиры: [48, 56], Углеводы: [285, 305] },
+  'Саша': { Ккал: [2210, 2487], Белки: [195, 210], Жиры: [48, 56], Углеводы: [285, 305] },
   'Маша': { Ккал: [1640, 1845], Белки: [124, 134], Жиры: [38, 47], Углеводы: [195, 212] }
 };
 const state = {
@@ -171,12 +171,33 @@ function matchingIngredients(meal, query){
     .filter(Boolean)
     .filter(product => normalizeSearch(product).includes(q));
 }
-function searchMealsByIngredient(query){
+function mealSearchText(meal){
+  return [
+    meal?.title, meal?.id,
+    meal?.dish?.Саша, meal?.dish?.Маша,
+    ...(meal?.ingredients || []).map(i => i.product)
+  ].filter(Boolean).join(' ');
+}
+function matchingFields(meal, query){
+  const q = normalizeSearch(query);
+  const hits = [];
+  if(normalizeSearch(meal.title).includes(q)) hits.push(meal.title);
+  const dish = `${meal.dish?.Саша || ''} ${meal.dish?.Маша || ''}`;
+  if(normalizeSearch(dish).includes(q)) hits.push('в названии блюда');
+  matchingIngredients(meal, q).forEach(product => {
+    if(!hits.includes(product)) hits.push(product);
+  });
+  return hits;
+}
+function searchMeals(query){
   const q = normalizeSearch(query);
   if(q.length < INGREDIENT_SEARCH_MIN) return [];
   return allMealRefs()
-    .map(ref => ({ ref, matches: matchingIngredients(ref.meal, q) }))
-    .filter(item => item.matches.length > 0);
+    .map(ref => ({ ref, matches: matchingFields(ref.meal, q) }))
+    .filter(item => normalizeSearch(mealSearchText(item.ref.meal)).includes(q));
+}
+function searchMealsByIngredient(query){
+  return searchMeals(query);
 }
 function ingredientCountLabel(count){
   if(count === 1) return '1 приём пищи';
@@ -267,7 +288,7 @@ function renderIngredientSearchDialog(){
   const queryLabel = state.recipeSearchQuery.trim();
   if(!queryLabel){
     title.textContent = 'Результаты';
-    list.innerHTML = `<div class="empty-state"><h3>Введите ингредиент</h3><p>Напишите название продукта и нажмите «Найти».</p></div>`;
+    list.innerHTML = `<div class="empty-state"><h3>Введите запрос</h3><p>Можно искать по блюду или продукту — например «сырники», «лосось» или «киноа».</p></div>`;
     if(!dialogEl.open) openAppDialog(dialogEl);
     return;
   }
@@ -280,10 +301,10 @@ function renderIngredientSearchDialog(){
   const results = searchMealsByIngredient(query);
   title.textContent = `«${queryLabel}»`;
   if(!results.length){
-    list.innerHTML = `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте другой ингредиент — например «овсянка», «курица» или «авокадо».</p></div>`;
+    list.innerHTML = `<div class="empty-state"><h3>Ничего не найдено</h3><p>Попробуйте название блюда или продукт — «овсяноблин», «курица», «авокадо».</p></div>`;
   } else {
     list.innerHTML = `
-      <p class="search-meta">${ingredientCountLabel(results.length)} с этим ингредиентом</p>
+      <p class="search-meta">${ingredientCountLabel(results.length)} по запросу «${queryLabel}»</p>
       <div class="daily-meals ingredient-search-meals">${results.map(({ ref, matches }) => {
         const type = mealTypeBadge(ref.meal.id);
         return `<button type="button" class="daily-meal" data-key="${ref.key}" aria-label="Открыть: ${ref.meal.title}, рацион ${ref.ration.id}">
@@ -339,6 +360,44 @@ function sumMacros(meals, person){
     return acc;
   }, { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 });
 }
+function sumDayMacros(day, person){
+  return (day?.meals || []).reduce((acc, meal) => {
+    const m = meal?.macros?.[person];
+    ['Ккал','Белки','Жиры','Углеводы'].forEach(k => acc[k] += Number(m?.[k] || 0));
+    return acc;
+  }, { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 });
+}
+function dayMacroCardsHtml(day){
+  const s = sumDayMacros(day, 'Саша');
+  const m = sumDayMacros(day, 'Маша');
+  return `<div class="day-macros">
+    <p class="eyebrow">КБЖУ за день</p>
+    <div class="dish-columns dish-columns-2">${macroCard('Саша', s)}${macroCard('Маша', m)}</div>
+  </div>`;
+}
+function averageDailyMacros(ration, person){
+  const days = ration?.days || [];
+  const blank = { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 };
+  if(!days.length) return blank;
+  const sum = days.reduce((acc, day) => {
+    const total = sumDayMacros(day, person);
+    ['Ккал','Белки','Жиры','Углеводы'].forEach(k => acc[k] += total[k]);
+    return acc;
+  }, { ...blank });
+  ['Ккал','Белки','Жиры','Углеводы'].forEach(k => { sum[k] = Math.round(sum[k] / days.length); });
+  return sum;
+}
+function focusItems(ration){
+  return ration?.focus?.length ? ration.focus : [
+    { id: 'меню', label: 'меню', emoji: '🍽️' }
+  ];
+}
+function focusBoardHtml(ration){
+  return `<div class="focus-board">${focusItems(ration).map(item => `<div class="focus-cell"><span>${item.emoji}</span><b>${item.label}</b></div>`).join('')}</div>`;
+}
+function miniMacroRow(person, data){
+  return `<div class="mini-macros"><span class="mini-macros-name">${person}</span><span>${data.Ккал} ккал</span><span>Б ${data.Белки}</span><span>Ж ${data.Жиры}</span><span>У ${data.Углеводы}</span></div>`;
+}
 function inRange(total, person){
   return Object.entries(DAILY_RANGES[person]).every(([k,[min,max]]) => total[k] >= min && total[k] <= max);
 }
@@ -360,19 +419,19 @@ function shuffle(items){
 
 
 const FOOD_PICTURES = [
-  { test: /омлет|яйц|egg|omelette/i, emoji: '🍳', label: 'Омлет и яйца', colors: ['#ffe3c2', '#f8b7b7'] },
-  { test: /каша|завтрак|овсян|киноа|полб|breakfast|bowl/i, emoji: '🥣', label: 'Завтрак-боул', colors: ['#fde2e4', '#d8e2dc'] },
-  { test: /слабосолен|красн|лосос|salmon/i, emoji: '🍣', label: 'Красная рыба', colors: ['#ffd6d6', '#fff0c9'] },
-  { test: /рыб|fish/i, emoji: '🐟', label: 'Рыбное блюдо', colors: ['#cde7f0', '#fff7c7'] },
-  { test: /куриц|chicken/i, emoji: '🍗', label: 'Курица', colors: ['#f8dfbb', '#d7ead9'] },
-  { test: /индейк|turkey/i, emoji: '🥙', label: 'Индейка', colors: ['#e2f0cb', '#ffe5d9'] },
-  { test: /говяд|теля|котлет|тефтел|фарш|meat|meatballs/i, emoji: '🍽️', label: 'Мясное блюдо', colors: ['#f1c0b9', '#f8e7c9'] },
-  { test: /фунчоз|лапш|noodle|glass noodles/i, emoji: '🍜', label: 'Фунчоза', colors: ['#d7e3fc', '#fff1c7'] },
-  { test: /лаваш|тост|джем|wrap|toast/i, emoji: '🥪', label: 'Лаваш и тосты', colors: ['#ffe5b4', '#fbc4ab'] },
-  { test: /картоф|potato/i, emoji: '🥔', label: 'Картофель', colors: ['#f8e6c1', '#d8e2dc'] },
-  { test: /перекус|кефир|йогурт|сорбет|зефир|фрукт|fruit|yogurt|snack/i, emoji: '🍓', label: 'Лёгкий перекус', colors: ['#fbcfe8', '#d8f3dc'] },
-  { test: /салат|овощ|брокколи|тыкв|баклаж|salad|vegetable/i, emoji: '🥗', label: 'Овощное блюдо', colors: ['#d8f3dc', '#fff3b0'] },
-  { test: /.*/i, emoji: '🍽️', label: 'Домашнее блюдо', colors: ['#fde2e4', '#cddafd'] }
+  { test: /омлет|яйц|egg|omelette/i, emoji: '🍳', label: 'Омлет и яйца', colors: ['#2a2420', '#3a2c2c'] },
+  { test: /каша|завтрак|овсян|киноа|полб|breakfast|bowl/i, emoji: '🥣', label: 'Завтрак-боул', colors: ['#1e2421', '#2a3328'] },
+  { test: /слабосолен|красн|лосос|salmon/i, emoji: '🍣', label: 'Красная рыба', colors: ['#2a1f1f', '#3a2a22'] },
+  { test: /рыб|fish/i, emoji: '🐟', label: 'Рыбное блюдо', colors: ['#1c2428', '#243038'] },
+  { test: /куриц|chicken/i, emoji: '🍗', label: 'Курица', colors: ['#2a261c', '#2e3324'] },
+  { test: /индейк|turkey/i, emoji: '🥙', label: 'Индейка', colors: ['#22281f', '#2c3324'] },
+  { test: /говяд|теля|котлет|тефтел|фарш|meat|meatballs/i, emoji: '🍽️', label: 'Мясное блюдо', colors: ['#2a201c', '#332822'] },
+  { test: /фунчоз|лапш|noodle|glass noodles/i, emoji: '🍜', label: 'Фунчоза', colors: ['#1f2428', '#2a2e24'] },
+  { test: /лаваш|тост|джем|wrap|toast/i, emoji: '🥪', label: 'Лаваш и тосты', colors: ['#2a241c', '#332c22'] },
+  { test: /картоф|potato/i, emoji: '🥔', label: 'Картофель', colors: ['#26221c', '#2e2a22'] },
+  { test: /перекус|кефир|йогурт|сорбет|зефир|фрукт|fruit|yogurt|snack/i, emoji: '🍓', label: 'Лёгкий перекус', colors: ['#241f24', '#2a2820'] },
+  { test: /салат|овощ|брокколи|тыкв|баклаж|salad|vegetable/i, emoji: '🥗', label: 'Овощное блюдо', colors: ['#1c261f', '#243024'] },
+  { test: /.*/i, emoji: '🍽️', label: 'Домашнее блюдо', colors: ['#1e2421', '#2a2428'] }
 ];
 
 function escapeSvgText(value){
@@ -380,7 +439,8 @@ function escapeSvgText(value){
 }
 
 function photoUrl(meal){
-  if (meal.image) return meal.image;
+  const image = String(meal?.image || '');
+  if (/images\/photo-/.test(image)) return image;
   const text = `${meal.id || ''} ${meal.title || ''} ${meal.photoQuery || ''} ${meal.dish?.Саша || ''} ${meal.dish?.Маша || ''}`;
   const pic = FOOD_PICTURES.find(item => item.test.test(text));
   const title = escapeSvgText(meal.title || pic.label);
@@ -393,23 +453,11 @@ function photoUrl(meal){
           <stop offset="0" stop-color="${a}"/>
           <stop offset="1" stop-color="${b}"/>
         </linearGradient>
-        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
-          <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#6b4f5f" flood-opacity="0.18"/>
-        </filter>
       </defs>
       <rect width="1100" height="650" rx="44" fill="url(#bg)"/>
-      <circle cx="935" cy="118" r="132" fill="#fff" opacity="0.38"/>
-      <circle cx="132" cy="545" r="172" fill="#fff" opacity="0.30"/>
-      <circle cx="782" cy="492" r="92" fill="#fff" opacity="0.22"/>
-      <g filter="url(#soft)">
-        <rect x="152" y="118" width="796" height="392" rx="46" fill="#fffdfb" opacity="0.88"/>
-        <text x="550" y="300" text-anchor="middle" font-size="138">${pic.emoji}</text>
-        <text x="550" y="378" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="700" fill="#5c4b51">${mealName}</text>
-        <text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#7a6269">${title}</text>
-      </g>
-      <text x="132" y="126" font-size="64">🥄</text>
-      <text x="910" y="552" font-size="72">✨</text>
-      <text x="70" y="580" font-size="58">🍃</text>
+      <text x="550" y="300" text-anchor="middle" font-size="138">${pic.emoji}</text>
+      <text x="550" y="378" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="700" fill="#efeae2">${mealName}</text>
+      <text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#c6a56a">${title}</text>
     </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
@@ -418,14 +466,24 @@ function renderHome(){
   $('pageTitle').textContent = 'Sasha & Masha | Питание';
   backBtn.classList.add('hidden'); shoppingBtn.classList.add('hidden');
   homeView.classList.remove('hidden'); rationView.classList.add('hidden');
+  if(state.pinnedId && !window.RATIONS.some(r => r.id === state.pinnedId)){
+    state.pinnedId = null;
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  }
   renderWeeklyFilter();
   updateFavoritesCount();
   const visibleRations = state.pinnedId ? window.RATIONS.filter(r => r.id === state.pinnedId) : window.RATIONS;
-  $('rationGrid').innerHTML = visibleRations.map(r => `
+  $('rationGrid').innerHTML = visibleRations.map(r => {
+    const s = averageDailyMacros(r, 'Саша');
+    const m = averageDailyMacros(r, 'Маша');
+    return `
     <button class="ration-card ${state.pinnedId === r.id ? 'pinned' : ''}" data-id="${r.id}">
-      <div class="ration-card-media"><img src="${r.hero}" alt="${r.title}"></div>
-      <div class="ration-card-body">${state.pinnedId === r.id ? '<span class="pin-badge">✓ Рацион недели</span>' : ''}<p class="eyebrow">Рацион ${r.id}</p><h3>${r.title}</h3><p>${r.subtitle}</p></div>
-    </button>`).join('');
+      ${focusBoardHtml(r)}
+      <div class="ration-card-body">${state.pinnedId === r.id ? '<span class="pin-badge">✓ Рацион недели</span>' : ''}<p class="eyebrow">Рацион ${r.id}</p><h3>${r.title}</h3><p>${r.subtitle}</p>
+        <div class="card-macros">${miniMacroRow('Саша', s)}${miniMacroRow('Маша', m)}</div>
+      </div>
+    </button>`;
+  }).join('');
   document.querySelectorAll('.ration-card').forEach(btn => btn.addEventListener('click', () => openRation(Number(btn.dataset.id))));
 }
 
@@ -462,10 +520,11 @@ function openRation(id, dayIndex = 0, mealIndex = 0){
   homeView.classList.add('hidden'); rationView.classList.remove('hidden');
   backBtn.classList.remove('hidden'); shoppingBtn.classList.remove('hidden');
   $('pageTitle').textContent = state.ration.title;
-  $('rationHeroImg').src = state.ration.hero;
   $('rationNumber').textContent = `Рацион ${state.ration.id}`;
   $('rationTitle').textContent = state.ration.title;
   $('rationSubtitle').textContent = state.ration.subtitle;
+  const focus = $('rationFocus');
+  if(focus) focus.innerHTML = focusItems(state.ration).map(item => `<span class="focus-pill"><span>${item.emoji}</span>${item.label}</span>`).join('');
   renderDays(); renderMeals(); renderMealDetail();
   window.scrollTo({top:0, behavior:'smooth'});
 }
@@ -476,7 +535,7 @@ function scrollActiveDayTab(){
   active?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
 function renderDays(){
-  $('dayTabs').innerHTML = state.ration.days.map((d,i)=>`<button class="day-tab ${i===state.dayIndex?'active':''}" data-i="${i}">${d.id}</button>`).join('');
+  $('dayTabs').innerHTML = state.ration.days.map((d,i)=>`<button class="day-tab ${i===state.dayIndex?'active':''}" data-i="${i}"><span class="day-tab-short">${d.id}</span><span class="day-tab-full">${d.name}</span></button>`).join('');
   document.querySelectorAll('.day-tab').forEach(btn => btn.addEventListener('click',()=>{state.dayIndex=Number(btn.dataset.i); state.mealIndex=0; renderDays(); renderMeals(); renderMealDetail();}));
   scrollActiveDayTab();
 }
@@ -488,8 +547,16 @@ function scrollActiveMealBtn(){
 function renderMeals(){
   const day = state.ration.days[state.dayIndex];
   $('selectedDayTitle').textContent = day.name;
-  $('mealButtons').innerHTML = day.meals.map((m,i)=>`<button class="meal-btn ${i===state.mealIndex?'active':''}" data-i="${i}"><strong>${m.id}</strong><br><span>${m.title}</span></button>`).join('');
+  $('mealButtons').innerHTML = day.meals.map((m,i) => {
+    const macros = m.macros?.Саша || {};
+    return `<button class="meal-btn ${i===state.mealIndex?'active':''}" data-i="${i}">
+      <img src="${photoUrl(m)}" alt="">
+      <span class="meal-btn-copy"><strong>${m.id}</strong><span>${m.title}</span><small>${macros.Ккал || '—'} ккал · Б ${macros.Белки || '—'}</small></span>
+    </button>`;
+  }).join('');
   document.querySelectorAll('.meal-btn').forEach(btn => btn.addEventListener('click',()=>{state.mealIndex=Number(btn.dataset.i); renderMeals(); renderMealDetail();}));
+  const totals = $('dayMacros');
+  if(totals) totals.innerHTML = dayMacroCardsHtml(day);
   scrollActiveMealBtn();
 }
 function macroDistance(mealA, mealB, person){
@@ -550,7 +617,7 @@ function macroCard(person, data){
 }
 function mealDetailHtml(ref, options = {}){
   const { meal, day, ration } = ref;
-  const { personFilter = 'both', showReplace = false, replaceCount = 0 } = options;
+  const { personFilter = 'both', showReplace = false, replaceCount = 0, showDayTotals = true } = options;
   const persons = personFilter === 'both' ? ['Саша', 'Маша'] : [personFilter];
   const key = mealKey(ration.id, day.id, meal.id);
   const img = photoUrl(meal);
@@ -722,7 +789,8 @@ function renderDailyMealDetail(){
   const { key, html } = mealDetailHtml(ref, {
     personFilter: state.dailyPersonFilter,
     showReplace: true,
-    replaceCount
+    replaceCount,
+    showDayTotals: false
   });
   $('dailyPlan').innerHTML = `<article class="meal-detail daily-meal-detail">${html}</article>`;
   bindFavoriteBtn($('dailyPlan'), key, renderDailyMealDetail);

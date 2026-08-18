@@ -5,9 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#0e1110" />
   <meta name="format-detection" content="telephone=no" />
   <title>Sasha & Masha | Питание</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script>
     (function () {
       var root = document.documentElement;
@@ -27,7 +31,7 @@
       window.addEventListener('resize', apply);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=53" />
 </head>
 <body>
   <div class="app-shell">
@@ -43,12 +47,12 @@
     <main>
       <section id="homeView" class="home-view">
         <div class="recipe-search-wrap" id="recipeSearchWrap">
-          <button type="button" class="recipe-search-trigger" id="recipeSearchToggle" aria-label="Поиск по ингредиентам" aria-expanded="false" aria-controls="recipeSearchPanel">
+          <button type="button" class="recipe-search-trigger" id="recipeSearchToggle" aria-label="Поиск по блюдам и ингредиентам" aria-expanded="false" aria-controls="recipeSearchPanel">
             <svg class="recipe-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
           </button>
           <div class="recipe-search-panel" id="recipeSearchPanel">
             <form class="recipe-search-form" id="recipeSearchForm">
-              <input type="search" id="recipeSearch" class="recipe-search-input" placeholder="Ингредиент — овсянка, курица…" autocomplete="off" enterkeyhint="search" aria-label="Поиск по ингредиентам" aria-controls="recipeSearchSuggestions" aria-expanded="false" aria-autocomplete="list" />
+              <input type="search" id="recipeSearch" class="recipe-search-input" placeholder="Блюдо или продукт — сырники, лосось, киноа…" autocomplete="off" enterkeyhint="search" aria-label="Поиск по блюдам и ингредиентам" aria-controls="recipeSearchSuggestions" aria-expanded="false" aria-autocomplete="list" />
               <button type="submit" class="pill recipe-search-submit" id="recipeSearchSubmit">Найти</button>
             </form>
             <div id="recipeSearchSuggestions" class="recipe-search-suggestions hidden" role="listbox" aria-label="Блюда с этим ингредиентом"></div>
@@ -56,7 +60,7 @@
         </div>
         <div class="intro-card">
           <div>
-            <p class="eyebrow">50 готовых недель</p>
+            <p class="eyebrow">23 готовые недели</p>
             <h2>Выберите рацион, а дальше сайт покажет меню, ингредиенты и закупку на двоих.</h2>
             <p>Привет! Саша и Маша, я ваш план питания с разной граммовкой, лёгкими перекусами и готовкой основных блюд на несколько дней!</p>
           </div>
@@ -82,18 +86,17 @@
       </section>
 
       <section id="rationView" class="ration-view hidden">
-        <div class="ration-hero">
-          <img id="rationHeroImg" alt="Обложка рациона" />
-          <div>
-            <p class="eyebrow" id="rationNumber"></p>
-            <h2 id="rationTitle"></h2>
-            <p id="rationSubtitle"></p>
-          </div>
+        <div class="ration-head">
+          <p class="eyebrow" id="rationNumber"></p>
+          <h2 id="rationTitle"></h2>
+          <p id="rationSubtitle"></p>
+          <div id="rationFocus" class="focus-pills"></div>
+          <div id="dayMacros" class="day-macros day-macros-top"></div>
         </div>
-        <div id="dayTabs" class="day-tabs"></div>
+        <nav id="dayTabs" class="day-tabs" aria-label="Дни недели"></nav>
+        <h3 id="selectedDayTitle" class="day-heading"></h3>
         <div class="content-grid">
           <aside class="meal-panel">
-            <h3 id="selectedDayTitle"></h3>
             <div id="mealButtons" class="meal-buttons"></div>
           </aside>
           <article id="mealDetail" class="meal-detail"></article>
@@ -121,7 +124,7 @@
   <dialog id="ingredientSearchDialog" class="shopping-dialog ingredient-search-dialog">
     <div class="dialog-head">
       <div>
-        <p class="eyebrow">Поиск по ингредиентам</p>
+        <p class="eyebrow">Поиск по блюдам и продуктам</p>
         <h2 id="ingredientSearchTitle">Результаты</h2>
       </div>
       <button type="button" class="ghost" id="closeIngredientSearch">Закрыть</button>
@@ -150,7 +153,7 @@
     <p>Откройте сайт через <strong>index.html</strong> и проверьте, что рядом лежат файлы <strong>data.js</strong>, <strong>app.js</strong> и <strong>styles.css</strong>.</p>
   </div>
 
-  <script src="data.js?v=50"></script>
-  <script src="app.js?v=50"></script>
+  <script src="data.js?v=53"></script>
+  <script src="app.js?v=53"></script>
 </body>
 </html>
