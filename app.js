@@ -100,6 +100,9 @@ function saveFavorites(){
   try { localStorage.setItem(FAVORITES_KEY, JSON.stringify(state.favorites)); }
   catch {}
   updateFavoritesCount();
+  if (window.SashaCloud && typeof window.SashaCloud.setFavoritesArray === "function") {
+    window.SashaCloud.setFavoritesArray(state.favorites);
+  }
 }
 function mealKey(rationId, dayId, mealId){ return `r${rationId}|${dayId}|${mealId}`; }
 function currentMeal(){ return state.ration.days[state.dayIndex].meals[state.mealIndex]; }
@@ -507,12 +510,18 @@ function renderWeeklyFilter(){
 function pinSelectedRation(){
   state.pinnedId = Number($('weeklySelect').value);
   try { localStorage.setItem(STORAGE_KEY, String(state.pinnedId)); } catch {}
+  if (window.SashaCloud && typeof window.SashaCloud.setPinned === "function") {
+    window.SashaCloud.setPinned(state.pinnedId);
+  }
   renderHome();
 }
 
 function resetWeeklyFilter(){
   state.pinnedId = null;
   try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  if (window.SashaCloud && typeof window.SashaCloud.setPinned === "function") {
+    window.SashaCloud.setPinned(null);
+  }
   renderHome();
 }
 
@@ -895,4 +904,17 @@ function boot(){
   });
   renderHome();
 }
+
+window.sashaPitanieReload = function(){
+  try { state.favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]'); }
+  catch { state.favorites = []; }
+  if(!Array.isArray(state.favorites)) state.favorites = [];
+  try {
+    const pin = localStorage.getItem(STORAGE_KEY);
+    state.pinnedId = pin ? Number(pin) : null;
+  } catch { state.pinnedId = null; }
+  updateFavoritesCount();
+  if(document.body.classList.contains('on-home')) renderHome();
+};
+
 boot();
