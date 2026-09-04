@@ -34,7 +34,7 @@
       window.addEventListener('resize', apply);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=54" />
+  <link rel="stylesheet" href="styles.css?v=55" />
 </head>
 <body>
   <header class="site-chrome">
@@ -77,7 +77,7 @@
           <div>
             <p class="eyebrow">23 готовые недели</p>
             <h2>Выберите рацион, а дальше сайт покажет меню, ингредиенты и закупку на двоих.</h2>
-            <p>Привет! Саша и Маша, я ваш план питания с разной граммовкой, лёгкими перекусами и готовкой основных блюд на несколько дней!</p>
+            <p>Привет! Саша и Маша, я ваш план питания с разной граммовкой, лёгкими перекусами, правками меню и синхронизацией между устройствами.</p>
           </div>
           <div class="intro-bubbles"><span>🥗</span><span>🍳</span><span>🛒</span></div>
         </div>
@@ -96,6 +96,9 @@
         <div class="home-actions">
           <button class="home-action" id="favoritesBtn" type="button"><span>♡</span><strong>Избранное</strong><small id="favoritesCount">0 рецептов</small></button>
           <button class="home-action" id="dailyPlanBtn" type="button"><span>☀️</span><strong>Рацион дня</strong><small>Собрать на 1 день</small></button>
+          <button class="home-action" id="toggleEditModeBtn" type="button"><span>✎</span><strong>Редактировать рацион</strong><small>Замена и баланс КБЖУ</small></button>
+          <button class="home-action" id="openMealCreateBtn" type="button"><span>＋</span><strong>Новое блюдо</strong><small>КБЖУ и ингредиенты</small></button>
+          <button class="home-action" id="openUsersBtn" type="button"><span>👤</span><strong>Пользователи</strong><small>Цели КБЖУ семьи</small></button>
         </div>
         <div id="rationGrid" class="ration-grid"></div>
       </section>
@@ -163,14 +166,89 @@
     <div id="dailyPlan" class="daily-plan"></div>
   </dialog>
 
+  <dialog id="usersDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Семья и цели</p>
+        <h2>Пользователи</h2>
+      </div>
+      <button type="button" class="ghost" id="closeUsers">Закрыть</button>
+    </div>
+    <div class="studio-layout">
+      <div id="usersList" class="users-list"></div>
+      <form id="userCreateForm" class="studio-form">
+        <h3>Добавить пользователя</h3>
+        <p class="studio-hint">Цели сохраняются в общем облаке и доступны с любого устройства по этой ссылке.</p>
+        <label class="field"><span>Имя</span><input name="name" required placeholder="Например, Алекс" /></label>
+        <div class="macro-fields ranges">
+          <label class="field"><span>Ккал мин</span><input type="number" name="kcalMin" required /></label>
+          <label class="field"><span>Ккал макс</span><input type="number" name="kcalMax" required /></label>
+          <label class="field"><span>Белки мин</span><input type="number" name="pMin" required /></label>
+          <label class="field"><span>Белки макс</span><input type="number" name="pMax" required /></label>
+          <label class="field"><span>Жиры мин</span><input type="number" name="fMin" required /></label>
+          <label class="field"><span>Жиры макс</span><input type="number" name="fMax" required /></label>
+          <label class="field"><span>Углеводы мин</span><input type="number" name="cMin" required /></label>
+          <label class="field"><span>Углеводы макс</span><input type="number" name="cMax" required /></label>
+        </div>
+        <button type="submit" class="pill">Сохранить пользователя</button>
+      </form>
+    </div>
+  </dialog>
+
+  <dialog id="mealCreateDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Библиотека блюд</p>
+        <h2>Новый приём пищи</h2>
+      </div>
+      <button type="button" class="ghost" id="closeMealCreate">Закрыть</button>
+    </div>
+    <div id="mealCreateBody" class="studio-scroll"></div>
+  </dialog>
+
+  <dialog id="mealReplaceDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Баланс дня</p>
+        <h2>Заменить блюдо</h2>
+      </div>
+      <button type="button" class="ghost" id="closeMealReplace">Закрыть</button>
+    </div>
+    <div id="mealReplaceBody" class="studio-scroll"></div>
+  </dialog>
+
+  <dialog id="mealAddDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Баланс дня</p>
+        <h2>Добавить блюдо</h2>
+      </div>
+      <button type="button" class="ghost" id="closeMealAdd">Закрыть</button>
+    </div>
+    <div id="mealAddBody" class="studio-scroll"></div>
+  </dialog>
+
+  <dialog id="scheduleDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Расписание</p>
+        <h2>Готовка и приём пищи</h2>
+      </div>
+      <button type="button" class="ghost" id="closeSchedule">Закрыть</button>
+    </div>
+    <div id="scheduleBody" class="studio-scroll"></div>
+  </dialog>
+
   <div id="bootError" class="boot-error hidden" role="alert">
     <h2>Не удалось загрузить данные</h2>
     <p>Откройте сайт через <strong>index.html</strong> и проверьте, что рядом лежат файлы <strong>data.js</strong>, <strong>app.js</strong> и <strong>styles.css</strong>.</p>
   </div>
 
-  <script src="sync.js?v=10"></script>
-  <script src="data.js?v=54"></script>
-  <script src="app.js?v=55"></script>
+  <script src="sync.js?v=11"></script>
+  <script src="data.js?v=55"></script>
+  <script src="editor.js?v=1"></script>
+  <script src="app.js?v=56"></script>
+  <script src="editor-ui.js?v=1"></script>
   <script src="assistant.js?v=7"></script>
 </body>
 </html>

@@ -26,10 +26,22 @@ function closeAppDialog(el){
 
 const STORAGE_KEY = 'sasha-masha-weekly-ration';
 const FAVORITES_KEY = 'sasha-masha-favorite-recipes';
-const DAILY_RANGES = {
+const DEFAULT_DAILY_RANGES = {
   'Саша': { Ккал: [2210, 2487], Белки: [195, 210], Жиры: [48, 56], Углеводы: [285, 305] },
   'Маша': { Ккал: [1640, 1845], Белки: [124, 134], Жиры: [38, 47], Углеводы: [195, 212] }
 };
+function DAILY_RANGES_MAP(){
+  if(window.SashaEditor?.rangesMap){
+    const map = window.SashaEditor.rangesMap();
+    if(map && Object.keys(map).length) return map;
+  }
+  return DEFAULT_DAILY_RANGES;
+}
+const DAILY_RANGES = new Proxy({}, {
+  get(_t, prop){ return DAILY_RANGES_MAP()[prop]; },
+  ownKeys(){ return Object.keys(DAILY_RANGES_MAP()); },
+  getOwnPropertyDescriptor(){ return { enumerable: true, configurable: true }; }
+});
 const state = {
   ration: null,
   dayIndex: 0,
@@ -371,11 +383,11 @@ function sumDayMacros(day, person){
   }, { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 });
 }
 function dayMacroCardsHtml(day){
-  const s = sumDayMacros(day, 'Саша');
-  const m = sumDayMacros(day, 'Маша');
+  const users = (window.SashaEditor?.activeUsers?.() || [{ name: 'Саша' }, { name: 'Маша' }]).map(u => u.name);
+  const cards = users.map(name => macroCard(name, sumDayMacros(day, name))).filter(Boolean);
   return `<div class="day-macros">
     <p class="eyebrow">КБЖУ за день</p>
-    <div class="dish-columns dish-columns-2">${macroCard('Саша', s)}${macroCard('Маша', m)}</div>
+    <div class="dish-columns dish-columns-${Math.min(cards.length, 3)}">${cards.join('')}</div>
   </div>`;
 }
 function averageDailyMacros(ration, person){
@@ -402,7 +414,9 @@ function miniMacroRow(person, data){
   return `<div class="mini-macros"><span class="mini-macros-name">${person}</span><span>${data.Ккал} ккал</span><span>Б ${data.Белки}</span><span>Ж ${data.Жиры}</span><span>У ${data.Углеводы}</span></div>`;
 }
 function inRange(total, person){
-  return Object.entries(DAILY_RANGES[person]).every(([k,[min,max]]) => total[k] >= min && total[k] <= max);
+  const ranges = DAILY_RANGES_MAP()[person];
+  if(!ranges) return false;
+  return Object.entries(ranges).every(([k,[min,max]]) => total[k] >= min && total[k] <= max);
 }
 function combinedShopping(meals, personFilter = 'both'){
   const map = new Map();
@@ -559,10 +573,12 @@ function renderMeals(){
   const day = state.ration.days[state.dayIndex];
   $('selectedDayTitle').textContent = day.name;
   $('mealButtons').innerHTML = day.meals.map((m,i) => {
-    const macros = m.macros?.Саша || {};
+    const macros = m.macros?.Саша || Object.values(m.macros || {})[0] || {};
+    const schedule = window.SashaEditor?.scheduleFor?.(state.ration.id, day.id, m.id);
+    const eat = schedule?.eat?.time ? ` · ${schedule.eat.time}` : '';
     return `<button class="meal-btn ${i===state.mealIndex?'active':''}" data-i="${i}">
       <img src="${photoUrl(m)}" alt="">
-      <span class="meal-btn-copy"><strong>${m.id}</strong><span>${m.title}</span><small>${macros.Ккал || '—'} ккал · Б ${macros.Белки || '—'}</small></span>
+      <span class="meal-btn-copy"><strong>${m.id}</strong><span>${m.title}</span><small>${macros.Ккал || '—'} ккал · Б ${macros.Белки || '—'}${eat}</small></span>
     </button>`;
   }).join('');
   document.querySelectorAll('.meal-btn').forEach(btn => btn.addEventListener('click',()=>{state.mealIndex=Number(btn.dataset.i); renderMeals(); renderMealDetail();}));
@@ -629,12 +645,20 @@ function macroCard(person, data){
 function mealDetailHtml(ref, options = {}){
   const { meal, day, ration } = ref;
   const { personFilter = 'both', showReplace = false, replaceCount = 0, showDayTotals = true } = options;
-  const persons = personFilter === 'both' ? ['Саша', 'Маша'] : [personFilter];
+  const activeNames = (window.SashaEditor?.activeUsers?.() || [{ name: 'Саша' }, { name: 'Маша' }]).map(u => u.name);
+  const mealPeople = Object.keys(meal.macros || {}).filter(name => activeNames.includes(name));
+  const persons = personFilter === 'both'
+    ? (mealPeople.length ? mealPeople : ['Саша', 'Маша'])
+    : [personFilter];
   const key = mealKey(ration.id, day.id, meal.id);
   const img = photoUrl(meal);
   const liked = isFavorite(key);
   const ingredients = mealIngredientsForPerson(meal, personFilter);
   const ingredientsTitle = dailyIngredientsTitle(personFilter);
+  const scheduleHtml = window.SashaEditor?.scheduleMarkersHtml
+    ? window.SashaEditor.scheduleMarkersHtml(ration.id, day.id, meal.id)
+    : '';
+  const editToolbar = window.SashaEditorUI?.editToolbarHtml ? window.SashaEditorUI.editToolbarHtml() : '';
   const replaceBlock = showReplace ? `
       <div class="daily-replace-row">
         <button type="button" class="pill daily-replace-btn" data-replace-meal ${replaceCount ? '' : 'disabled'}>Заменить на другое блюдо</button>
@@ -649,12 +673,14 @@ function mealDetailHtml(ref, options = {}){
         <div><p class="eyebrow">${day.name} · ${meal.id}</p><h2>${meal.title}</h2><p class="meal-meta">Рацион ${ration.id}</p></div>
         <button class="heart-btn ${liked ? 'active' : ''}" data-favorite-btn aria-label="${liked ? 'Убрать из избранного' : 'Добавить в избранное'}">${liked ? '♥' : '♡'}</button>
       </div>
+      ${scheduleHtml}
+      ${editToolbar}
       ${replaceBlock}
       <h3>${ingredientsTitle}</h3>
       <div class="ingredients">${ingredients.map(i=>`<span class="chip">${i.product}: ${formatAmount(i)}</span>`).join('') || '<span class="chip">Ингредиенты указаны в описании блюда</span>'}</div>
-      <div class="dish-columns dish-columns-${persons.length}">${persons.map(p => `<div class="dish-card"><h4>${p}</h4><p>${meal.dish[p] || '—'}</p></div>`).join('')}</div>
+      <div class="dish-columns dish-columns-${persons.length}">${persons.map(p => `<div class="dish-card"><h4>${p}</h4><p>${meal.dish?.[p] || '—'}</p></div>`).join('')}</div>
       <h3>Справочно БЖУ и калории</h3>
-      <div class="dish-columns dish-columns-${persons.length}">${persons.map(p => macroCard(p, meal.macros[p])).join('')}</div>
+      <div class="dish-columns dish-columns-${persons.length}">${persons.map(p => macroCard(p, meal.macros?.[p])).join('')}</div>
     </div>`
   };
 }
@@ -667,10 +693,12 @@ function bindFavoriteBtn(container, key, rerender){
 function renderMealDetail(){
   const meal = currentMeal();
   const day = currentDay();
+  if(!meal || !day) return;
   const ref = { meal, day, ration: state.ration };
   const { key, html } = mealDetailHtml(ref);
   $('mealDetail').innerHTML = html;
   bindFavoriteBtn($('mealDetail'), key, renderMealDetail);
+  window.SashaEditorUI?.bindEditToolbar?.($('mealDetail'));
 }
 function openShopping(){
   const r = state.ration;
@@ -913,8 +941,22 @@ window.sashaPitanieReload = function(){
     const pin = localStorage.getItem(STORAGE_KEY);
     state.pinnedId = pin ? Number(pin) : null;
   } catch { state.pinnedId = null; }
+  if(window.SashaEditor?.refreshRations) window.SashaEditor.refreshRations();
   updateFavoritesCount();
   if(document.body.classList.contains('on-home')) renderHome();
+  else if(state.ration){
+    const id = state.ration.id;
+    const dayIndex = state.dayIndex;
+    const mealIndex = state.mealIndex;
+    openRation(id, dayIndex, mealIndex);
+  }
 };
+
+window.state = state;
+window.renderMealDetail = renderMealDetail;
+window.renderMeals = renderMeals;
+window.renderDays = renderDays;
+window.openRation = openRation;
+window.renderHome = renderHome;
 
 boot();

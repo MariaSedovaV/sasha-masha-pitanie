@@ -23,11 +23,17 @@
     const a = ["ghp", "DVug0NHyTKn", "Dy0DEpid6MUW", "rYnYwd70LiOfV"];
     return a[0] + "_" + a.slice(1).join("");
   }
+
+  function empty() {
     return {
       notes: { sasha: [], masha: [] },
       budgetAdds: [],
       favorites: {},
       pinned: { id: null, at: 0 },
+      users: [],
+      customMeals: [],
+      rationPatches: {},
+      schedules: {},
       rev: 0,
     };
   }
@@ -81,6 +87,17 @@
     return Number(right.at || 0) >= Number(left.at || 0) ? right : left;
   }
 
+  function mergeMaps(a, b) {
+    const out = { ...(a || {}) };
+    const src = b || {};
+    for (const key of Object.keys(src)) {
+      const cur = out[key];
+      const next = src[key];
+      if (!cur || stamp(next) >= stamp(cur)) out[key] = next;
+    }
+    return out;
+  }
+
   function mergeState(a, b) {
     const left = a || empty();
     const right = b || empty();
@@ -92,6 +109,10 @@
       budgetAdds: mergeItems(left.budgetAdds, right.budgetAdds),
       favorites: mergeFavs(left.favorites, right.favorites),
       pinned: mergePinned(left.pinned, right.pinned),
+      users: mergeItems(left.users, right.users),
+      customMeals: mergeItems(left.customMeals, right.customMeals),
+      rationPatches: mergeMaps(left.rationPatches, right.rationPatches),
+      schedules: mergeMaps(left.schedules, right.schedules),
       rev: Math.max(Number(left.rev || 0), Number(right.rev || 0)),
     };
   }
@@ -121,6 +142,10 @@
       budgetAdds: Array.isArray(budgetAdds) ? budgetAdds : [],
       favorites,
       pinned: { id: pinRaw ? Number(pinRaw) : null, at: pinRaw ? 1 : 0 },
+      users: [],
+      customMeals: [],
+      rationPatches: {},
+      schedules: {},
       rev: 0,
     };
   }
@@ -266,6 +291,10 @@
       budgetAdds: state?.budgetAdds || [],
       favorites: state?.favorites || {},
       pinned: state?.pinned || {},
+      users: state?.users || [],
+      customMeals: state?.customMeals || [],
+      rationPatches: state?.rationPatches || {},
+      schedules: state?.schedules || {},
     });
   }
 
@@ -400,6 +429,65 @@
     setPinned(id) {
       return applyPatch((s) => {
         s.pinned = { id: id || null, at: Date.now() };
+      });
+    },
+    setUsers(list) {
+      return applyPatch((s) => { s.users = mergeItems(s.users, list); });
+    },
+    upsertUser(user) {
+      return applyPatch((s) => {
+        const next = { ...user, updatedAt: Date.now(), at: user.at || Date.now() };
+        s.users = mergeItems(s.users, [next]);
+      });
+    },
+    deleteUser(id) {
+      return applyPatch((s) => {
+        const item = (s.users || []).find((u) => String(u.id) === String(id));
+        if (item) {
+          item.deleted = true;
+          item.updatedAt = Date.now();
+        }
+      });
+    },
+    upsertCustomMeal(meal) {
+      return applyPatch((s) => {
+        const next = { ...meal, updatedAt: Date.now(), at: meal.at || Date.now() };
+        s.customMeals = mergeItems(s.customMeals, [next]);
+      });
+    },
+    deleteCustomMeal(id) {
+      return applyPatch((s) => {
+        const item = (s.customMeals || []).find((m) => String(m.id) === String(id));
+        if (item) {
+          item.deleted = true;
+          item.updatedAt = Date.now();
+        }
+      });
+    },
+    setRationPatch(rationId, patch) {
+      return applyPatch((s) => {
+        s.rationPatches = {
+          ...(s.rationPatches || {}),
+          [String(rationId)]: { ...(patch || {}), updatedAt: Date.now(), at: Date.now() },
+        };
+      });
+    },
+    clearRationPatch(rationId) {
+      return applyPatch((s) => {
+        const key = String(rationId);
+        const prev = s.rationPatches?.[key];
+        s.rationPatches = {
+          ...(s.rationPatches || {}),
+          [key]: { meals: {}, deleted: true, updatedAt: Date.now(), at: Date.now(), prevAt: prev?.at || 0 },
+        };
+      });
+    },
+    setSchedule(key, value) {
+      return applyPatch((s) => {
+        s.schedules = {
+          ...(s.schedules || {}),
+          [String(key)]: { ...(value || {}), updatedAt: Date.now(), at: Date.now() },
+        };
       });
     },
   };

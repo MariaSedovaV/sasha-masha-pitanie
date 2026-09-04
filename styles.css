@@ -1097,3 +1097,171 @@ html.is-mobile .theme-toggle{
 html.is-mobile .home-link{width:40px;height:40px}
 body.on-home .topbar{display:none}
 
+
+/* —— Studio / schedules / editing —— */
+.schedule-markers{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:0 0 18px
+}
+.schedule-pill{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  grid-template-rows:auto auto;
+  column-gap:10px;
+  row-gap:2px;
+  align-items:center;
+  min-width:min(100%,240px);
+  flex:1;
+  padding:12px 14px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:linear-gradient(160deg,rgba(36,40,38,.92),rgba(24,28,26,.96));
+  box-shadow:0 10px 28px rgba(0,0,0,.18)
+}
+.schedule-pill i{
+  grid-row:1 / span 2;
+  font-style:normal;
+  font-size:22px;
+  opacity:.9
+}
+.schedule-pill b{
+  font-size:11px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--gold)
+}
+.schedule-pill em{
+  font-style:normal;
+  color:var(--ink);
+  font-size:13px;
+  line-height:1.35;
+  font-weight:600
+}
+.schedule-pill.cook{border-color:rgba(143,190,168,.28)}
+.schedule-pill.eat{border-color:rgba(212,180,131,.28)}
+.edit-toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:0 0 18px;
+  padding:12px;
+  border-radius:20px;
+  border:1px dashed rgba(212,180,131,.35);
+  background:rgba(212,180,131,.06)
+}
+.edit-toolbar .edit-action{
+  min-height:42px;
+  padding:10px 14px;
+  font-weight:700;
+  font-size:13px
+}
+html.edit-mode .meal-detail{
+  outline:1px solid rgba(212,180,131,.22);
+  box-shadow:0 0 0 1px rgba(212,180,131,.08), var(--shadow)
+}
+.home-action.active,
+#toggleEditModeBtn.active{
+  outline:2px solid rgba(212,180,131,.45);
+  background:rgba(212,180,131,.1)
+}
+.studio-dialog{width:min(720px,96vw)}
+.studio-scroll{max-height:72vh;overflow:auto;padding:8px 22px 24px}
+.studio-layout{display:grid;gap:18px;padding:8px 22px 24px}
+.studio-form{display:grid;gap:14px}
+.studio-form h3{margin:0}
+.studio-lead{margin:0;color:var(--muted);line-height:1.45}
+.studio-hint{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+.field{display:grid;gap:6px}
+.field span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.field input,
+.field select,
+.field textarea{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--bg-2);
+  color:var(--ink);
+  padding:12px 14px;
+  font:inherit;
+  outline:none
+}
+.field textarea{resize:vertical;min-height:84px}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{border-color:rgba(212,180,131,.55);box-shadow:0 0 0 3px rgba(212,180,131,.12)}
+.macro-fields{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px
+}
+.macro-fields.ranges{grid-template-columns:repeat(2,minmax(0,1fr))}
+.studio-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+.users-list{display:grid;gap:10px}
+.studio-card{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:16px 18px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,rgba(36,40,38,.9),rgba(23,26,34,.95))
+}
+.studio-card h3{margin:0 0 6px;font-size:18px}
+.studio-card p{margin:0;color:var(--muted);font-size:13px;line-height:1.4}
+.balance-preview{
+  display:grid;
+  gap:10px;
+  padding:14px 16px;
+  border-radius:18px;
+  border:1px solid rgba(143,190,168,.28);
+  background:rgba(143,190,168,.08)
+}
+.balance-preview.empty{
+  color:var(--muted);
+  border-style:dashed;
+  background:transparent
+}
+.balance-preview > div{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.balance-preview span{color:var(--muted);font-size:13px}
+.balance-preview strong{font-size:14px}
+.editor-toast{
+  position:fixed;
+  left:50%;
+  bottom:28px;
+  transform:translateX(-50%) translateY(20px);
+  z-index:80;
+  max-width:min(520px,92vw);
+  padding:14px 18px;
+  border-radius:999px;
+  background:#1c211e;
+  color:var(--ink);
+  border:1px solid var(--line);
+  box-shadow:0 18px 40px rgba(0,0,0,.35);
+  opacity:0;
+  pointer-events:none;
+  transition:.28s ease;
+  font-weight:700;
+  font-size:14px;
+  text-align:center
+}
+.editor-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.editor-toast.ok{border-color:rgba(143,190,168,.45)}
+.editor-toast.err{border-color:rgba(217,137,122,.5)}
+html[data-theme="light"] .schedule-pill,
+html[data-theme="light"] .studio-card,
+html[data-theme="light"] .balance-preview{
+  background:rgba(255,250,242,.92)
+}
+html[data-theme="light"] .field input,
+html[data-theme="light"] .field select,
+html[data-theme="light"] .field textarea{
+  background:#fffdf8
+}
+html[data-theme="light"] .editor-toast{background:#fffdf8;color:#2a241c}
+@media (max-width:768px){
+  .schedule-pill{min-width:100%}
+  .macro-fields{grid-template-columns:1fr}
+  .edit-toolbar{position:sticky;top:0;z-index:4;backdrop-filter:blur(10px)}
+}
