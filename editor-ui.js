@@ -232,7 +232,7 @@
       if (!options[idx]) return;
       try {
         await window.SashaEditor.replaceMeal(ration.id, day.id, meal.id, options[idx], person);
-        toast("Блюдо заменено, порции пересчитаны");
+        toast("Блюдо заменено и сохранено в облаке");
         closeDialog($("mealReplaceDialog"));
         if (typeof window.renderMealDetail === "function") window.renderMealDetail();
         if (typeof window.renderMeals === "function") window.renderMeals();
@@ -289,7 +289,7 @@
       if (!options[idx]) return;
       try {
         await window.SashaEditor.addMealToDay(ration.id, day.id, options[idx], person, mealType);
-        toast("Блюдо добавлено в день");
+        toast("Блюдо добавлено и сохранено в облаке");
         closeDialog($("mealAddDialog"));
         if (typeof window.openRation === "function") window.openRation(ration.id, window.state.dayIndex, 0);
       } catch {
@@ -305,7 +305,7 @@
     if (!confirm(`Удалить «${meal.title}» из ${day.name}?`)) return;
     try {
       await window.SashaEditor.deleteMeal(ration.id, day.id, meal.id);
-      toast("Блюдо удалено");
+      toast("Блюдо удалено и сохранено в облаке");
       if (typeof window.openRation === "function") {
         window.openRation(ration.id, window.state.dayIndex, 0);
       }
@@ -324,12 +324,16 @@
         ? "<span>✎</span><strong>Режим правок</strong><small>Нажмите, чтобы выключить</small>"
         : "<span>✎</span><strong>Редактировать рацион</strong><small>Открыть редактор</small>";
     }
-    const gear = $("rationEditGearBtn");
-    if (gear) {
-      gear.classList.toggle("active", on);
-      gear.setAttribute("aria-pressed", on ? "true" : "false");
-      gear.title = on ? "Выключить режим правок" : "Редактировать рацион";
-      gear.setAttribute("aria-label", gear.title);
+    const toggle = $("rationEditToggleBtn");
+    if (toggle) {
+      toggle.classList.toggle("active", on);
+      toggle.setAttribute("aria-pressed", on ? "true" : "false");
+      toggle.title = on ? "Выключить режим правок" : "Включить режим правок";
+      toggle.setAttribute("aria-label", toggle.title);
+      const strong = toggle.querySelector("strong");
+      const small = toggle.querySelector("small");
+      if (strong) strong.textContent = "Режим правок";
+      if (small) small.textContent = on ? "Включён · нажмите, чтобы выкл." : "Включить";
     }
   }
 
@@ -578,7 +582,7 @@
     });
     $("openMealCreateBtn")?.addEventListener("click", openMealCreateDialog);
     $("toggleEditModeBtn")?.addEventListener("click", handleHomeEditToggle);
-    $("rationEditGearBtn")?.addEventListener("click", handleRationGearToggle);
+    $("rationEditToggleBtn")?.addEventListener("click", handleRationGearToggle);
     $("generateRationBtn")?.addEventListener("click", openGenerateDialog);
     $("closeUsers")?.addEventListener("click", () => closeDialog($("usersDialog")));
     $("closeMealCreate")?.addEventListener("click", () => closeDialog($("mealCreateDialog")));

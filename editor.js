@@ -340,12 +340,8 @@
   }
 
   async function saveGeneratedRation(ration) {
-    if (!global.SashaCloud) {
-      // local-only fallback
-      const list = customRations();
-      list.push(ration);
-      refreshRations();
-      return ration;
+    if (!global.SashaCloud || typeof global.SashaCloud.upsertCustomRation !== "function") {
+      return Promise.reject(new Error("cloud-unavailable"));
     }
     await global.SashaCloud.upsertCustomRation(ration);
     refreshRations();
@@ -613,7 +609,10 @@
   }
 
   function savePatch(rationId, patch) {
-    if (!global.SashaCloud) return Promise.resolve();
+    if (!global.SashaCloud || typeof global.SashaCloud.setRationPatch !== "function") {
+      return Promise.reject(new Error("cloud-unavailable"));
+    }
+    patch = { ...(patch || {}), updatedAt: Date.now(), at: Date.now() };
     return global.SashaCloud.setRationPatch(rationId, patch).then(() => {
       refreshRations();
     });
@@ -687,7 +686,9 @@
       at: Date.now(),
       updatedAt: Date.now(),
     };
-    if (!global.SashaCloud) return Promise.resolve(meal);
+    if (!global.SashaCloud || typeof global.SashaCloud.upsertCustomMeal !== "function") {
+      return Promise.reject(new Error("cloud-unavailable"));
+    }
     return global.SashaCloud.upsertCustomMeal(meal).then(() => meal);
   }
 
@@ -697,11 +698,14 @@
       name: String(data.name || "").trim(),
       gender: data.gender || "female",
       targets: data.targets,
+      active: data.active !== false,
       at: Date.now(),
       updatedAt: Date.now(),
     };
     if (!user.name) return Promise.reject(new Error("name-required"));
-    if (!global.SashaCloud) return Promise.resolve(user);
+    if (!global.SashaCloud || typeof global.SashaCloud.upsertUser !== "function") {
+      return Promise.reject(new Error("cloud-unavailable"));
+    }
     return global.SashaCloud.upsertUser(user).then(() => user);
   }
 

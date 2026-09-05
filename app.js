@@ -555,7 +555,7 @@ function resolveRationId(id){
   }
   return window.RATIONS.find(r => String(r.id) === String(id))?.id ?? id;
 }
-function openRation(id, dayIndex = 0, mealIndex = 0){
+function openRation(id, dayIndex = 0, mealIndex = 0, options = {}){
   document.body.classList.remove('on-home');
   const resolved = resolveRationId(id);
   state.ration = window.RATIONS.find(r => r.id === resolved || String(r.id) === String(resolved));
@@ -574,7 +574,7 @@ function openRation(id, dayIndex = 0, mealIndex = 0){
   if(focus) focus.innerHTML = focusItems(state.ration).map(item => `<span class="focus-pill"><span>${item.emoji}</span>${item.label}</span>`).join('');
   renderDays(); renderMeals(); renderMealDetail();
   window.SashaEditorUI?.syncEditModeUi?.();
-  window.scrollTo({top:0, behavior:'smooth'});
+  if(!options.silent) window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function scrollActiveDayTab(){
@@ -975,7 +975,7 @@ window.sashaPitanieReload = function(){
     const id = state.ration.id;
     const dayIndex = state.dayIndex;
     const mealIndex = state.mealIndex;
-    openRation(id, dayIndex, mealIndex);
+    openRation(id, dayIndex, mealIndex, { silent: true });
   }
 };
 
