@@ -90,11 +90,19 @@
   }
 
   function openUsersDialog() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
     renderUsersPanel();
     openDialog($("usersDialog"));
   }
 
   function openMealCreateDialog() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
     const users = window.SashaEditor.activeUsers();
     const focus = users[0]?.name || "Саша";
     $("mealCreateBody").innerHTML = `
@@ -307,6 +315,10 @@
   }
 
   function openEditStudioDialog() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
     const rations = window.RATIONS || [];
     const pinned = window.state?.pinnedId;
     const current = window.state?.ration?.id;
@@ -327,18 +339,23 @@
     openDialog($("editStudioDialog"));
     $("editStudioForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const fd = new FormData(e.target);
-      const id = fd.get("rationId");
-      const numeric = Number(id);
-      const rationId = Number.isNaN(numeric) ? id : numeric;
-      window.SashaEditor.setEditMode(true);
-      closeDialog($("editStudioDialog"));
-      if (typeof window.openRation === "function") window.openRation(rationId, 0, 0);
-      toast("Редактор открыт — в карточке блюда есть кнопки правок");
-      const btn = $("toggleEditModeBtn");
-      if (btn) {
-        btn.classList.add("active");
-        btn.innerHTML = "<span>✎</span><strong>Режим правок</strong><small>Включён</small>";
+      try {
+        const fd = new FormData(e.target);
+        const id = fd.get("rationId");
+        const numeric = Number(id);
+        const rationId = Number.isNaN(numeric) ? id : numeric;
+        window.SashaEditor.setEditMode(true);
+        closeDialog($("editStudioDialog"));
+        if (typeof window.openRation === "function") window.openRation(rationId, 0, 0);
+        toast("Редактор открыт — в карточке блюда есть кнопки правок");
+        const btn = $("toggleEditModeBtn");
+        if (btn) {
+          btn.classList.add("active");
+          btn.innerHTML = "<span>✎</span><strong>Режим правок</strong><small>Включён</small>";
+        }
+      } catch (err) {
+        console.error(err);
+        toast("Не удалось открыть редактор", false);
       }
     });
     $("editStudioBody").querySelector("[data-close-edit-studio]")?.addEventListener("click", () => closeDialog($("editStudioDialog")));

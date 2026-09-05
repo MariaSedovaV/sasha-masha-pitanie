@@ -85,6 +85,10 @@
     return map;
   }
 
+  function customMeals() {
+    return (cloud().customMeals || []).filter((m) => m && !m.deleted);
+  }
+
   function customRations() {
     return (cloud().customRations || []).filter((r) => r && !r.deleted);
   }
