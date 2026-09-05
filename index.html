@@ -34,7 +34,7 @@
       window.addEventListener('resize', apply);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=56" />
+  <link rel="stylesheet" href="styles.css?v=57" />
 </head>
 <body>
   <header class="site-chrome">
@@ -96,19 +96,26 @@
         <div class="home-actions">
           <button class="home-action" id="favoritesBtn" type="button"><span>♡</span><strong>Избранное</strong><small id="favoritesCount">0 рецептов</small></button>
           <button class="home-action" id="dailyPlanBtn" type="button"><span>☀️</span><strong>Рацион дня</strong><small>Собрать на 1 день</small></button>
-          <button class="home-action" id="generateRationBtn" type="button"><span>✦</span><strong>Собрать рацион</strong><small>Под нормы КБЖУ</small></button>
-          <button class="home-action" id="toggleEditModeBtn" type="button"><span>✎</span><strong>Редактировать рацион</strong><small>Открыть редактор</small></button>
-          <button class="home-action" id="openMealCreateBtn" type="button"><span>＋</span><strong>Новое блюдо</strong><small>КБЖУ и ингредиенты</small></button>
           <button class="home-action" id="openUsersBtn" type="button"><span>👤</span><strong>Пользователи</strong><small>Цели КБЖУ семьи</small></button>
+          <button class="home-action" id="toggleEditModeBtn" type="button"><span>✎</span><strong>Редактировать рацион</strong><small>Открыть редактор</small></button>
+          <button class="home-action" id="generateRationBtn" type="button"><span>✦</span><strong>Конструктор рационов</strong><small>Под нормы КБЖУ</small></button>
+          <button class="home-action" id="openMealCreateBtn" type="button"><span>＋</span><strong>Новое блюдо</strong><small>КБЖУ и ингредиенты</small></button>
         </div>
         <div id="rationGrid" class="ration-grid"></div>
       </section>
 
       <section id="rationView" class="ration-view hidden">
         <div class="ration-head">
-          <p class="eyebrow" id="rationNumber"></p>
-          <h2 id="rationTitle"></h2>
-          <p id="rationSubtitle"></p>
+          <div class="ration-head-row">
+            <div class="ration-head-copy">
+              <p class="eyebrow" id="rationNumber"></p>
+              <h2 id="rationTitle"></h2>
+              <p id="rationSubtitle"></p>
+            </div>
+            <button type="button" class="ration-edit-gear" id="rationEditGearBtn" aria-label="Редактировать рацион" aria-pressed="false" title="Редактировать рацион">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8.4a3.6 3.6 0 1 0 0 7.2 3.6 3.6 0 0 0 0-7.2Zm8.1 2.7-1.1-.2a6.8 6.8 0 0 0-.6-1.5l.7-.9a.9.9 0 0 0-.1-1.2l-1.3-1.3a.9.9 0 0 0-1.2-.1l-.9.7a6.8 6.8 0 0 0-1.5-.6l-.2-1.1A.9.9 0 0 0 12.9 3h-1.8a.9.9 0 0 0-.9.8l-.2 1.1a6.8 6.8 0 0 0-1.5.6l-.9-.7a.9.9 0 0 0-1.2.1L5.1 6.2a.9.9 0 0 0-.1 1.2l.7.9a6.8 6.8 0 0 0-.6 1.5l-1.1.2a.9.9 0 0 0-.8.9v1.8a.9.9 0 0 0 .8.9l1.1.2c.1.5.3 1 .6 1.5l-.7.9a.9.9 0 0 0 .1 1.2l1.3 1.3a.9.9 0 0 0 1.2.1l.9-.7c.5.3 1 .5 1.5.6l.2 1.1a.9.9 0 0 0 .9.8h1.8a.9.9 0 0 0 .9-.8l.2-1.1c.5-.1 1-.3 1.5-.6l.9.7a.9.9 0 0 0 1.2-.1l1.3-1.3a.9.9 0 0 0 .1-1.2l-.7-.9c.3-.5.5-1 .6-1.5l1.1-.2a.9.9 0 0 0 .8-.9v-1.8a.9.9 0 0 0-.8-.9Z" fill="currentColor"/></svg>
+            </button>
+          </div>
           <div id="rationFocus" class="focus-pills"></div>
           <div id="dayMacros" class="day-macros day-macros-top"></div>
         </div>
@@ -261,7 +268,7 @@
     <div class="dialog-head">
       <div>
         <p class="eyebrow">Автосборка</p>
-        <h2>Собрать рацион под КБЖУ</h2>
+        <h2>Конструктор рационов</h2>
       </div>
       <button type="button" class="ghost" id="closeGenerate">Закрыть</button>
     </div>
@@ -275,9 +282,9 @@
 
   <script src="sync.js?v=13"></script>
   <script src="data.js?v=55"></script>
-  <script src="editor.js?v=3"></script>
-  <script src="app.js?v=58"></script>
-  <script src="editor-ui.js?v=4"></script>
+  <script src="editor.js?v=4"></script>
+  <script src="app.js?v=59"></script>
+  <script src="editor-ui.js?v=5"></script>
   <script src="assistant.js?v=7"></script>
 </body>
 </html>

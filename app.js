@@ -573,6 +573,7 @@ function openRation(id, dayIndex = 0, mealIndex = 0){
   const focus = $('rationFocus');
   if(focus) focus.innerHTML = focusItems(state.ration).map(item => `<span class="focus-pill"><span>${item.emoji}</span>${item.label}</span>`).join('');
   renderDays(); renderMeals(); renderMealDetail();
+  window.SashaEditorUI?.syncEditModeUi?.();
   window.scrollTo({top:0, behavior:'smooth'});
 }
 

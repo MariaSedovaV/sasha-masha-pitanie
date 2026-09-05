@@ -314,6 +314,64 @@
     }
   }
 
+  function syncEditModeUi() {
+    const on = !!window.SashaEditor?.isEditMode?.();
+    const homeBtn = $("toggleEditModeBtn");
+    if (homeBtn) {
+      homeBtn.classList.toggle("active", on);
+      homeBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      homeBtn.innerHTML = on
+        ? "<span>✎</span><strong>Режим правок</strong><small>Нажмите, чтобы выключить</small>"
+        : "<span>✎</span><strong>Редактировать рацион</strong><small>Открыть редактор</small>";
+    }
+    const gear = $("rationEditGearBtn");
+    if (gear) {
+      gear.classList.toggle("active", on);
+      gear.setAttribute("aria-pressed", on ? "true" : "false");
+      gear.title = on ? "Выключить режим правок" : "Редактировать рацион";
+      gear.setAttribute("aria-label", gear.title);
+    }
+  }
+
+  function turnEditModeOff() {
+    if (!window.SashaEditor) return;
+    window.SashaEditor.setEditMode(false);
+    toast("Режим правок выключен");
+  }
+
+  function turnEditModeOnForCurrentRation() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
+    window.SashaEditor.setEditMode(true);
+    toast("Редактор включён — в карточке блюда есть кнопки правок");
+  }
+
+  function handleHomeEditToggle() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
+    if (window.SashaEditor.isEditMode()) {
+      turnEditModeOff();
+      return;
+    }
+    openEditStudioDialog();
+  }
+
+  function handleRationGearToggle() {
+    if (!window.SashaEditor) {
+      toast("Редактор ещё не загрузился. Обновите страницу.", false);
+      return;
+    }
+    if (window.SashaEditor.isEditMode()) {
+      turnEditModeOff();
+      return;
+    }
+    turnEditModeOnForCurrentRation();
+  }
+
   function openEditStudioDialog() {
     if (!window.SashaEditor) {
       toast("Редактор ещё не загрузился. Обновите страницу.", false);
@@ -348,11 +406,6 @@
         closeDialog($("editStudioDialog"));
         if (typeof window.openRation === "function") window.openRation(rationId, 0, 0);
         toast("Редактор открыт — в карточке блюда есть кнопки правок");
-        const btn = $("toggleEditModeBtn");
-        if (btn) {
-          btn.classList.add("active");
-          btn.innerHTML = "<span>✎</span><strong>Режим правок</strong><small>Включён</small>";
-        }
       } catch (err) {
         console.error(err);
         toast("Не удалось открыть редактор", false);
@@ -524,7 +577,8 @@
       openUsersDialog();
     });
     $("openMealCreateBtn")?.addEventListener("click", openMealCreateDialog);
-    $("toggleEditModeBtn")?.addEventListener("click", openEditStudioDialog);
+    $("toggleEditModeBtn")?.addEventListener("click", handleHomeEditToggle);
+    $("rationEditGearBtn")?.addEventListener("click", handleRationGearToggle);
     $("generateRationBtn")?.addEventListener("click", openGenerateDialog);
     $("closeUsers")?.addEventListener("click", () => closeDialog($("usersDialog")));
     $("closeMealCreate")?.addEventListener("click", () => closeDialog($("mealCreateDialog")));
@@ -534,6 +588,13 @@
     $("closeEditStudio")?.addEventListener("click", () => closeDialog($("editStudioDialog")));
     $("closeGenerate")?.addEventListener("click", () => closeDialog($("generateDialog")));
     bindUserForm();
+    syncEditModeUi();
+    window.SashaEditor?.subscribe?.(() => {
+      syncEditModeUi();
+      if (typeof window.renderMealDetail === "function" && window.state?.ration) {
+        window.renderMealDetail();
+      }
+    });
   }
 
   window.SashaEditorUI = {
@@ -546,6 +607,8 @@
     openScheduleDialog,
     openEditStudioDialog,
     openGenerateDialog,
+    syncEditModeUi,
+    handleRationGearToggle,
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
