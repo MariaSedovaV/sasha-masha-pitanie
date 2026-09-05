@@ -4,12 +4,14 @@
     {
       id: "sasha",
       name: "Саша",
+      gender: "male",
       targets: { Ккал: [2210, 2487], Белки: [195, 210], Жиры: [48, 56], Углеводы: [285, 305] },
       at: 1,
     },
     {
       id: "masha",
       name: "Маша",
+      gender: "female",
       targets: { Ккал: [1640, 1845], Белки: [124, 134], Жиры: [38, 47], Углеводы: [195, 212] },
       at: 1,
     },
@@ -83,8 +85,267 @@
     return map;
   }
 
-  function customMeals() {
-    return (cloud().customMeals || []).filter((m) => m && !m.deleted);
+  function customRations() {
+    return (cloud().customRations || []).filter((r) => r && !r.deleted);
+  }
+
+  function snackCountForUser(user) {
+    const gender = String(user?.gender || "").toLowerCase();
+    if (gender === "female" || gender === "ж" || gender === "woman") return 2;
+    if (gender === "male" || gender === "м" || gender === "man") return 3;
+    // fallback by known names
+    if (user?.name === "Маша") return 2;
+    if (user?.name === "Саша") return 3;
+    return 3;
+  }
+
+  function mealSlotsForUser(user) {
+    const snacks = snackCountForUser(user);
+    const slots = ["Завтрак", "Обед", "Ужин", "Перекус 1", "Перекус 2"];
+    if (snacks >= 3) slots.push("Перекус 3");
+    return slots;
+  }
+
+  function catalogByType() {
+    const map = {
+      Завтрак: [],
+      Обед: [],
+      Ужин: [],
+      "Перекус 1": [],
+      "Перекус 2": [],
+      "Перекус 3": [],
+    };
+    customMeals().forEach((m) => {
+      const type = m.mealType || "Обед";
+      if (!map[type]) map[type] = [];
+      map[type].push(m);
+    });
+    (ensureBase() || []).forEach((ration) => {
+      (ration.days || []).forEach((day) => {
+        (day.meals || []).forEach((meal) => {
+          const type = meal.id;
+          if (!map[type]) return;
+          map[type].push(meal);
+        });
+      });
+    });
+    // dedupe by title+type
+    Object.keys(map).forEach((type) => {
+      const seen = new Set();
+      map[type] = map[type].filter((m) => {
+        const key = `${m.title}|${type}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return Boolean(m.macros);
+      });
+    });
+    return map;
+  }
+
+  function inTargetRange(macros, targets) {
+    if (!macros || !targets) return false;
+    return MACRO_KEYS.every((k) => {
+      const range = targets[k];
+      if (!Array.isArray(range)) return true;
+      const v = Number(macros[k] || 0);
+      return v >= Number(range[0]) && v <= Number(range[1]);
+    });
+  }
+
+  function scoreDay(macros, targets) {
+    return MACRO_KEYS.reduce((sum, k) => {
+      const mid = midpoint(targets[k]);
+      return sum + Math.abs(Number(macros[k] || 0) - mid);
+    }, 0);
+  }
+
+  function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pickDayMeals(focusUser, catalog) {
+    const slots = mealSlotsForUser(focusUser);
+    const persons = activeUsers().map((u) => u.name);
+    const snackPool = [
+      ...(catalog["Перекус 1"] || []),
+      ...(catalog["Перекус 2"] || []),
+      ...(catalog["Перекус 3"] || []),
+    ];
+    let best = null;
+    for (let attempt = 0; attempt < 1800; attempt += 1) {
+      const meals = [];
+      let ok = true;
+      for (const slot of slots) {
+        let pool = catalog[slot] || [];
+        if (slot.startsWith("Перекус") && (!pool.length || Math.random() < 0.35)) pool = snackPool;
+        if (!pool.length) {
+          ok = false;
+          break;
+        }
+        const template = pool[Math.floor(Math.random() * Math.min(pool.length, 48))];
+        const meal = clone(template);
+        meal.id = slot;
+        meal.macros = meal.macros || {};
+        persons.forEach((p) => {
+          if (!meal.macros[p]) {
+            const base = meal.macros[focusUser.name] || Object.values(meal.macros)[0] || { Ккал: 200, Белки: 15, Жиры: 5, Углеводы: 20 };
+            const ratio = p === focusUser.name ? 1 : (p === "Маша" ? 0.75 : 0.9);
+            meal.macros[p] = {
+              Ккал: Math.round(Number(base.Ккал || 0) * ratio),
+              Белки: Math.round(Number(base.Белки || 0) * ratio),
+              Жиры: Math.round(Number(base.Жиры || 0) * ratio),
+              Углеводы: Math.round(Number(base.Углеводы || 0) * ratio),
+            };
+          }
+        });
+        meals.push(meal);
+      }
+      if (!ok) continue;
+
+      const totals = meals.reduce((acc, meal) => {
+        const m = meal.macros[focusUser.name] || {};
+        MACRO_KEYS.forEach((k) => { acc[k] += Number(m[k] || 0); });
+        return acc;
+      }, { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 });
+
+      const targetKcal = midpoint(focusUser.targets?.Ккал);
+      const scale = targetKcal && totals.Ккал ? targetKcal / totals.Ккал : 1;
+      const clamped = Math.min(1.35, Math.max(0.7, scale));
+      const scaledMeals = meals.map((meal) => {
+        const next = clone(meal);
+        persons.forEach((p) => {
+          const src = next.macros[p] || {};
+          next.macros[p] = {
+            Ккал: Math.round(Number(src.Ккал || 0) * clamped),
+            Белки: Math.round(Number(src.Белки || 0) * clamped),
+            Жиры: Math.round(Number(src.Жиры || 0) * clamped),
+            Углеводы: Math.round(Number(src.Углеводы || 0) * clamped),
+          };
+        });
+        next.ingredients = (next.ingredients || []).map((ing) => ({
+          ...ing,
+          amount: scaleAmount(ing.amount, clamped, ing.unit),
+        }));
+        return next;
+      });
+
+      const scaledTotals = scaledMeals.reduce((acc, meal) => {
+        const m = meal.macros[focusUser.name] || {};
+        MACRO_KEYS.forEach((k) => { acc[k] += Number(m[k] || 0); });
+        return acc;
+      }, { Ккал: 0, Белки: 0, Жиры: 0, Углеводы: 0 });
+
+      // soft protein window ±12% if exact range fails after scale
+      const softTargets = {};
+      MACRO_KEYS.forEach((k) => {
+        const range = focusUser.targets?.[k] || [0, 9999];
+        const pad = k === "Белки" ? 0.08 : 0.05;
+        softTargets[k] = [
+          Math.floor(range[0] * (1 - pad)),
+          Math.ceil(range[1] * (1 + pad)),
+        ];
+      });
+      if (!inTargetRange(scaledTotals, softTargets)) continue;
+      const score = scoreDay(scaledTotals, focusUser.targets);
+      if (!best || score < best.score) best = { meals: scaledMeals, totals: scaledTotals, score };
+      if (score < 55) break;
+    }
+    return best;
+  }
+
+  function makeHero(color, emoji) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420"><rect width="720" height="420" rx="42" fill="${color}"/><text x="455" y="285" font-size="142">${emoji}</text></svg>`;
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+
+  function generateWeeklyRation(focusUserName, title) {
+    const users = activeUsers();
+    const focusUser = users.find((u) => u.name === focusUserName) || users[0];
+    if (!focusUser) throw new Error("no-user");
+    const catalog = catalogByType();
+    const dayIds = [
+      ["ПН", "Понедельник"],
+      ["ВТ", "Вторник"],
+      ["СР", "Среда"],
+      ["ЧТ", "Четверг"],
+      ["ПТ", "Пятница"],
+      ["СБ", "Суббота"],
+      ["ВС", "Воскресенье"],
+    ];
+    // batch cooking: same lunch/dinner for ПН/ВТ, СР/ЧТ, ПТ/СБ
+    const blocks = [
+      ["ПН", "ВТ"],
+      ["СР", "ЧТ"],
+      ["ПТ", "СБ"],
+    ];
+    const blockMeals = {};
+    for (const [d1] of blocks) {
+      const picked = pickDayMeals(focusUser, catalog);
+      if (!picked) throw new Error("generate-failed");
+      blockMeals[d1] = picked;
+    }
+    const days = dayIds.map(([id, name]) => {
+      let sourceDay = id;
+      for (const [a, b] of blocks) {
+        if (id === b) sourceDay = a;
+      }
+      let picked = blockMeals[sourceDay];
+      if (id === "ВС" || !picked) {
+        picked = pickDayMeals(focusUser, catalog);
+      }
+      if (!picked) throw new Error("generate-failed-day");
+      // for pair days keep lunch/dinner/snacks shared, vary breakfast
+      let meals = clone(picked.meals);
+      if (id !== sourceDay && id !== "ВС") {
+        const breakfastPool = catalog.Завтрак || [];
+        if (breakfastPool.length) {
+          const b = clone(breakfastPool[Math.floor(Math.random() * breakfastPool.length)]);
+          b.id = "Завтрак";
+          meals = meals.map((m) => (m.id === "Завтрак" ? b : m));
+        }
+      }
+      return { id, name, meals };
+    });
+
+    const snacks = snackCountForUser(focusUser);
+    const ration = {
+      id: `gen-${uid()}`,
+      title: title || `Рацион для ${focusUser.name}`,
+      subtitle: `Автосборка под КБЖУ · ${focusUser.name} · ${snacks} перекуса`,
+      color: "#d8e2dc",
+      hero: makeHero("#d8e2dc", "✦"),
+      focus: [
+        { id: "меню", label: "авто", emoji: "✦" },
+        { id: focusUser.name.toLowerCase(), label: focusUser.name, emoji: "👤" },
+      ],
+      days,
+      shopping: [],
+      generatedFor: focusUser.name,
+      gender: focusUser.gender || (snacks === 2 ? "female" : "male"),
+      custom: true,
+      at: Date.now(),
+      updatedAt: Date.now(),
+    };
+    ration.shopping = rebuildShopping(ration);
+    return ration;
+  }
+
+  async function saveGeneratedRation(ration) {
+    if (!global.SashaCloud) {
+      // local-only fallback
+      const list = customRations();
+      list.push(ration);
+      refreshRations();
+      return ration;
+    }
+    await global.SashaCloud.upsertCustomRation(ration);
+    refreshRations();
+    return ration;
   }
 
   function ensureBase() {
@@ -161,7 +422,20 @@
 
   function refreshRations() {
     const base = ensureBase();
-    global.RATIONS = applyPatches(clone(base));
+    const patched = applyPatches(clone(base));
+    const generated = customRations().map((r) => clone(r));
+    // keep numeric ids first, then custom generated
+    const byKey = new Map();
+    patched.forEach((r) => byKey.set(String(r.id), r));
+    generated.forEach((r) => byKey.set(String(r.id), r));
+    global.RATIONS = [...byKey.values()].sort((a, b) => {
+      const an = Number(a.id);
+      const bn = Number(b.id);
+      if (!Number.isNaN(an) && !Number.isNaN(bn)) return an - bn;
+      if (!Number.isNaN(an)) return -1;
+      if (!Number.isNaN(bn)) return 1;
+      return String(a.title || "").localeCompare(String(b.title || ""), "ru");
+    });
     listeners.forEach((fn) => {
       try { fn(); } catch {}
     });
@@ -417,6 +691,7 @@
     const user = {
       id: data.id || uid(),
       name: String(data.name || "").trim(),
+      gender: data.gender || "female",
       targets: data.targets,
       at: Date.now(),
       updatedAt: Date.now(),
@@ -507,6 +782,11 @@
     sumDayPerson,
     MACRO_KEYS,
     DEFAULT_USERS,
+    snackCountForUser,
+    mealSlotsForUser,
+    generateWeeklyRation,
+    saveGeneratedRation,
+    customRations,
   };
 
   // Capture base rations immediately; patches apply on cloud sync / DOM ready.

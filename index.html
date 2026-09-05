@@ -34,7 +34,7 @@
       window.addEventListener('resize', apply);
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=55" />
+  <link rel="stylesheet" href="styles.css?v=56" />
 </head>
 <body>
   <header class="site-chrome">
@@ -96,7 +96,8 @@
         <div class="home-actions">
           <button class="home-action" id="favoritesBtn" type="button"><span>♡</span><strong>Избранное</strong><small id="favoritesCount">0 рецептов</small></button>
           <button class="home-action" id="dailyPlanBtn" type="button"><span>☀️</span><strong>Рацион дня</strong><small>Собрать на 1 день</small></button>
-          <button class="home-action" id="toggleEditModeBtn" type="button"><span>✎</span><strong>Редактировать рацион</strong><small>Замена и баланс КБЖУ</small></button>
+          <button class="home-action" id="generateRationBtn" type="button"><span>✦</span><strong>Собрать рацион</strong><small>Под нормы КБЖУ</small></button>
+          <button class="home-action" id="toggleEditModeBtn" type="button"><span>✎</span><strong>Редактировать рацион</strong><small>Открыть редактор</small></button>
           <button class="home-action" id="openMealCreateBtn" type="button"><span>＋</span><strong>Новое блюдо</strong><small>КБЖУ и ингредиенты</small></button>
           <button class="home-action" id="openUsersBtn" type="button"><span>👤</span><strong>Пользователи</strong><small>Цели КБЖУ семьи</small></button>
         </div>
@@ -179,7 +180,13 @@
       <form id="userCreateForm" class="studio-form">
         <h3>Добавить пользователя</h3>
         <p class="studio-hint">Цели сохраняются в общем облаке и доступны с любого устройства по этой ссылке.</p>
-        <label class="field"><span>Имя</span><input name="name" required placeholder="Например, Алекс" /></label>
+            <label class="field"><span>Имя</span><input name="name" required placeholder="Например, Алекс" /></label>
+        <label class="field"><span>Пол</span>
+          <select name="gender" required>
+            <option value="female">Женский · 2 перекуса</option>
+            <option value="male">Мужской · 3 перекуса</option>
+          </select>
+        </label>
         <div class="macro-fields ranges">
           <label class="field"><span>Ккал мин</span><input type="number" name="kcalMin" required /></label>
           <label class="field"><span>Ккал макс</span><input type="number" name="kcalMax" required /></label>
@@ -239,16 +246,38 @@
     <div id="scheduleBody" class="studio-scroll"></div>
   </dialog>
 
+  <dialog id="editStudioDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Редактор</p>
+        <h2>Редактировать рацион</h2>
+      </div>
+      <button type="button" class="ghost" id="closeEditStudio">Закрыть</button>
+    </div>
+    <div id="editStudioBody" class="studio-scroll"></div>
+  </dialog>
+
+  <dialog id="generateDialog" class="shopping-dialog studio-dialog">
+    <div class="dialog-head">
+      <div>
+        <p class="eyebrow">Автосборка</p>
+        <h2>Собрать рацион под КБЖУ</h2>
+      </div>
+      <button type="button" class="ghost" id="closeGenerate">Закрыть</button>
+    </div>
+    <div id="generateBody" class="studio-scroll"></div>
+  </dialog>
+
   <div id="bootError" class="boot-error hidden" role="alert">
     <h2>Не удалось загрузить данные</h2>
     <p>Откройте сайт через <strong>index.html</strong> и проверьте, что рядом лежат файлы <strong>data.js</strong>, <strong>app.js</strong> и <strong>styles.css</strong>.</p>
   </div>
 
-  <script src="sync.js?v=11"></script>
+  <script src="sync.js?v=12"></script>
   <script src="data.js?v=55"></script>
-  <script src="editor.js?v=1"></script>
-  <script src="app.js?v=56"></script>
-  <script src="editor-ui.js?v=1"></script>
+  <script src="editor.js?v=2"></script>
+  <script src="app.js?v=57"></script>
+  <script src="editor-ui.js?v=2"></script>
   <script src="assistant.js?v=7"></script>
 </body>
 </html>

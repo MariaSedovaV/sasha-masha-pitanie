@@ -32,6 +32,7 @@
       pinned: { id: null, at: 0 },
       users: [],
       customMeals: [],
+      customRations: [],
       rationPatches: {},
       schedules: {},
       rev: 0,
@@ -111,6 +112,7 @@
       pinned: mergePinned(left.pinned, right.pinned),
       users: mergeItems(left.users, right.users),
       customMeals: mergeItems(left.customMeals, right.customMeals),
+      customRations: mergeItems(left.customRations, right.customRations),
       rationPatches: mergeMaps(left.rationPatches, right.rationPatches),
       schedules: mergeMaps(left.schedules, right.schedules),
       rev: Math.max(Number(left.rev || 0), Number(right.rev || 0)),
@@ -144,6 +146,7 @@
       pinned: { id: pinRaw ? Number(pinRaw) : null, at: pinRaw ? 1 : 0 },
       users: [],
       customMeals: [],
+      customRations: [],
       rationPatches: {},
       schedules: {},
       rev: 0,
@@ -293,6 +296,7 @@
       pinned: state?.pinned || {},
       users: state?.users || [],
       customMeals: state?.customMeals || [],
+      customRations: state?.customRations || [],
       rationPatches: state?.rationPatches || {},
       schedules: state?.schedules || {},
     });
@@ -453,6 +457,21 @@
       return applyPatch((s) => {
         const next = { ...meal, updatedAt: Date.now(), at: meal.at || Date.now() };
         s.customMeals = mergeItems(s.customMeals, [next]);
+      });
+    },
+    upsertCustomRation(ration) {
+      return applyPatch((s) => {
+        const next = { ...ration, updatedAt: Date.now(), at: ration.at || Date.now() };
+        s.customRations = mergeItems(s.customRations || [], [next]);
+      });
+    },
+    deleteCustomRation(id) {
+      return applyPatch((s) => {
+        const item = (s.customRations || []).find((r) => String(r.id) === String(id));
+        if (item) {
+          item.deleted = true;
+          item.updatedAt = Date.now();
+        }
       });
     },
     deleteCustomMeal(id) {

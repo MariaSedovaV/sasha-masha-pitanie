@@ -47,8 +47,12 @@ const state = {
   dayIndex: 0,
   mealIndex: 0,
   pinnedId: (() => {
-    try { return Number(localStorage.getItem(STORAGE_KEY)) || null; }
-    catch { return null; }
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const n = Number(raw);
+      return Number.isNaN(n) ? raw : n;
+    } catch { return null; }
   })(),
   favorites: loadFavorites(),
   dailyPlan: null,
@@ -502,7 +506,7 @@ function renderHome(){
       </div>
     </button>`;
   }).join('');
-  document.querySelectorAll('.ration-card').forEach(btn => btn.addEventListener('click', () => openRation(Number(btn.dataset.id))));
+  document.querySelectorAll('.ration-card').forEach(btn => btn.addEventListener('click', () => openRation(btn.dataset.id)));
 }
 
 function renderWeeklyFilter(){
@@ -522,7 +526,9 @@ function renderWeeklyFilter(){
 }
 
 function pinSelectedRation(){
-  state.pinnedId = Number($('weeklySelect').value);
+  const raw = $('weeklySelect').value;
+  const asNum = Number(raw);
+  state.pinnedId = Number.isNaN(asNum) ? raw : asNum;
   try { localStorage.setItem(STORAGE_KEY, String(state.pinnedId)); } catch {}
   if (window.SashaCloud && typeof window.SashaCloud.setPinned === "function") {
     window.SashaCloud.setPinned(state.pinnedId);
@@ -539,13 +545,29 @@ function resetWeeklyFilter(){
   renderHome();
 }
 
+function resolveRationId(id){
+  const exact = window.RATIONS.find(r => r.id === id);
+  if(exact) return exact.id;
+  const asNum = Number(id);
+  if(!Number.isNaN(asNum)){
+    const byNum = window.RATIONS.find(r => r.id === asNum);
+    if(byNum) return byNum.id;
+  }
+  return window.RATIONS.find(r => String(r.id) === String(id))?.id ?? id;
+}
 function openRation(id, dayIndex = 0, mealIndex = 0){
   document.body.classList.remove('on-home');
-  state.ration = window.RATIONS.find(r => r.id === id); state.dayIndex = dayIndex; state.mealIndex = mealIndex;
+  const resolved = resolveRationId(id);
+  state.ration = window.RATIONS.find(r => r.id === resolved || String(r.id) === String(resolved));
+  if(!state.ration){
+    renderHome();
+    return;
+  }
+  state.dayIndex = dayIndex; state.mealIndex = mealIndex;
   homeView.classList.add('hidden'); rationView.classList.remove('hidden');
   backBtn.classList.remove('hidden'); shoppingBtn.classList.remove('hidden');
   $('pageTitle').textContent = state.ration.title;
-  $('rationNumber').textContent = `Рацион ${state.ration.id}`;
+  $('rationNumber').textContent = state.ration.custom ? 'Собранный рацион' : `Рацион ${state.ration.id}`;
   $('rationTitle').textContent = state.ration.title;
   $('rationSubtitle').textContent = state.ration.subtitle;
   const focus = $('rationFocus');
@@ -939,7 +961,11 @@ window.sashaPitanieReload = function(){
   if(!Array.isArray(state.favorites)) state.favorites = [];
   try {
     const pin = localStorage.getItem(STORAGE_KEY);
-    state.pinnedId = pin ? Number(pin) : null;
+    if (!pin) state.pinnedId = null;
+    else {
+      const n = Number(pin);
+      state.pinnedId = Number.isNaN(n) ? pin : n;
+    }
   } catch { state.pinnedId = null; }
   if(window.SashaEditor?.refreshRations) window.SashaEditor.refreshRations();
   updateFavoritesCount();

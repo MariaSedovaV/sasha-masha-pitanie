@@ -78,10 +78,12 @@
     const users = window.SashaEditor.activeUsers();
     list.innerHTML = users.map((u) => {
       const t = u.targets || {};
+      const snacks = window.SashaEditor.snackCountForUser(u);
       return `<article class="studio-card user-card">
         <div>
           <h3>${u.name}</h3>
           <p>${t.Ккал?.[0] || "—"}–${t.Ккал?.[1] || "—"} ккал · Б ${t.Белки?.[0] || "—"}–${t.Белки?.[1] || "—"} · Ж ${t.Жиры?.[0] || "—"}–${t.Жиры?.[1] || "—"} · У ${t.Углеводы?.[0] || "—"}–${t.Углеводы?.[1] || "—"}</p>
+          <p>${u.gender === "female" ? "Женский" : u.gender === "male" ? "Мужской" : "Пол не указан"} · ${snacks} перекуса</p>
         </div>
       </article>`;
     }).join("");
@@ -304,7 +306,105 @@
     }
   }
 
-  function openScheduleDialog() {
+  function openEditStudioDialog() {
+    const rations = window.RATIONS || [];
+    const pinned = window.state?.pinnedId;
+    const current = window.state?.ration?.id;
+    const selected = current || pinned || rations[0]?.id;
+    $("editStudioBody").innerHTML = `
+      <form id="editStudioForm" class="studio-form">
+        <p class="studio-lead">Выберите рацион — откроем его с панелью правок: замена, добавление, удаление блюд и график готовки/приёма.</p>
+        <label class="field"><span>Рацион</span>
+          <select name="rationId" required>
+            ${rations.map((r) => `<option value="${r.id}" ${String(r.id) === String(selected) ? "selected" : ""}>Рацион ${r.id}: ${r.title}</option>`).join("")}
+          </select>
+        </label>
+        <div class="studio-actions">
+          <button type="submit" class="pill">Открыть редактор</button>
+          <button type="button" class="ghost" data-close-edit-studio>Отмена</button>
+        </div>
+      </form>`;
+    openDialog($("editStudioDialog"));
+    $("editStudioForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const id = fd.get("rationId");
+      const numeric = Number(id);
+      const rationId = Number.isNaN(numeric) ? id : numeric;
+      window.SashaEditor.setEditMode(true);
+      closeDialog($("editStudioDialog"));
+      if (typeof window.openRation === "function") window.openRation(rationId, 0, 0);
+      toast("Редактор открыт — в карточке блюда есть кнопки правок");
+      const btn = $("toggleEditModeBtn");
+      if (btn) {
+        btn.classList.add("active");
+        btn.innerHTML = "<span>✎</span><strong>Режим правок</strong><small>Включён</small>";
+      }
+    });
+    $("editStudioBody").querySelector("[data-close-edit-studio]")?.addEventListener("click", () => closeDialog($("editStudioDialog")));
+  }
+
+  function openGenerateDialog() {
+    const users = window.SashaEditor.activeUsers();
+    const focus = users.find((u) => u.name === "Саша")?.name || users[0]?.name || "Саша";
+    $("generateBody").innerHTML = `
+      <form id="generateForm" class="studio-form">
+        <p class="studio-lead">Соберём неделю из каталога блюд под нормы выбранного человека. У женщин — 2 перекуса, у мужчин — 3. Обеды и ужины готовятся блоками на два дня.</p>
+        <label class="field"><span>Для кого считать КБЖУ</span>
+          <select name="focusPerson">${personOptions(focus)}</select>
+        </label>
+        <label class="field"><span>Название рациона</span>
+          <input name="title" placeholder="Например, Автосборка для Саши" />
+        </label>
+        <div id="generateHint" class="balance-preview"></div>
+        <div class="studio-actions">
+          <button type="submit" class="pill">Собрать и сохранить</button>
+          <button type="button" class="ghost" data-close-generate>Отмена</button>
+        </div>
+      </form>`;
+    openDialog($("generateDialog"));
+    const form = $("generateForm");
+    const hint = $("generateHint");
+    function updateHint() {
+      const name = String(new FormData(form).get("focusPerson"));
+      const user = window.SashaEditor.activeUsers().find((u) => u.name === name);
+      const snacks = window.SashaEditor.snackCountForUser(user);
+      const t = user?.targets || {};
+      hint.innerHTML = `<div><span>Перекусов</span><strong>${snacks}</strong></div>
+        <div><span>Цель ккал</span><strong>${t.Ккал?.[0] || "—"}–${t.Ккал?.[1] || "—"}</strong></div>
+        <div><span>Белки</span><strong>${t.Белки?.[0] || "—"}–${t.Белки?.[1] || "—"}</strong></div>`;
+    }
+    form.addEventListener("change", updateHint);
+    updateHint();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const focusPerson = String(fd.get("focusPerson"));
+      const title = String(fd.get("title") || "").trim();
+      const submit = form.querySelector('[type="submit"]');
+      if (submit) {
+        submit.disabled = true;
+        submit.textContent = "Собираем…";
+      }
+      try {
+        const ration = window.SashaEditor.generateWeeklyRation(focusPerson, title || undefined);
+        await window.SashaEditor.saveGeneratedRation(ration);
+        toast("Рацион собран и сохранён для всех устройств");
+        closeDialog($("generateDialog"));
+        if (typeof window.renderHome === "function") window.renderHome();
+        if (typeof window.openRation === "function") window.openRation(ration.id, 0, 0);
+      } catch (err) {
+        console.error(err);
+        toast("Не удалось собрать рацион в заданных нормах. Попробуйте ещё раз.", false);
+      } finally {
+        if (submit) {
+          submit.disabled = false;
+          submit.textContent = "Собрать и сохранить";
+        }
+      }
+    });
+    $("generateBody").querySelector("[data-close-generate]")?.addEventListener("click", () => closeDialog($("generateDialog")));
+  }
     const { ration, day, meal } = currentContext();
     if (!ration || !day || !meal) return;
     const current = window.SashaEditor.scheduleFor(ration.id, day.id, meal.id);
@@ -358,6 +458,7 @@
       e.preventDefault();
       const fd = new FormData(form);
       const name = String(fd.get("name") || "").trim();
+      const gender = String(fd.get("gender") || "female");
       const targets = {
         Ккал: [Number(fd.get("kcalMin")), Number(fd.get("kcalMax"))],
         Белки: [Number(fd.get("pMin")), Number(fd.get("pMax"))],
@@ -365,7 +466,7 @@
         Углеводы: [Number(fd.get("cMin")), Number(fd.get("cMax"))],
       };
       try {
-        await window.SashaEditor.upsertUserFromForm({ name, targets });
+        await window.SashaEditor.upsertUserFromForm({ name, gender, targets });
         toast(`Пользователь ${name} сохранён`);
         form.reset();
         renderUsersPanel();
@@ -404,22 +505,15 @@
       openUsersDialog();
     });
     $("openMealCreateBtn")?.addEventListener("click", openMealCreateDialog);
-    $("toggleEditModeBtn")?.addEventListener("click", () => {
-      const next = !window.SashaEditor.isEditMode();
-      window.SashaEditor.setEditMode(next);
-      const btn = $("toggleEditModeBtn");
-      if (btn) {
-        btn.classList.toggle("active", next);
-        btn.innerHTML = next ? "<span>✎</span><strong>Режим правок</strong><small>Включён</small>" : "<span>✎</span><strong>Редактировать рацион</strong><small>Замена и баланс КБЖУ</small>";
-      }
-      toast(next ? "Режим редактирования включён" : "Режим редактирования выключен");
-      if (typeof window.renderMealDetail === "function") window.renderMealDetail();
-    });
+    $("toggleEditModeBtn")?.addEventListener("click", openEditStudioDialog);
+    $("generateRationBtn")?.addEventListener("click", openGenerateDialog);
     $("closeUsers")?.addEventListener("click", () => closeDialog($("usersDialog")));
     $("closeMealCreate")?.addEventListener("click", () => closeDialog($("mealCreateDialog")));
     $("closeMealReplace")?.addEventListener("click", () => closeDialog($("mealReplaceDialog")));
     $("closeMealAdd")?.addEventListener("click", () => closeDialog($("mealAddDialog")));
     $("closeSchedule")?.addEventListener("click", () => closeDialog($("scheduleDialog")));
+    $("closeEditStudio")?.addEventListener("click", () => closeDialog($("editStudioDialog")));
+    $("closeGenerate")?.addEventListener("click", () => closeDialog($("generateDialog")));
     bindUserForm();
   }
 
@@ -431,6 +525,8 @@
     openMealCreateDialog,
     openUsersDialog,
     openScheduleDialog,
+    openEditStudioDialog,
+    openGenerateDialog,
   };
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
