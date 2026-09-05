@@ -274,11 +274,11 @@ html.assist-open,html.assist-open body{overflow:hidden}
         <button type="button" class="assist-to-top" id="assist-to-top" aria-label="Наверх" title="Наверх">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.2 5.6 11.6a1 1 0 0 0 1.4 1.4L11 8.9V19a1 1 0 1 0 2 0V8.9l4 4.1a1 1 0 0 0 1.4-1.4L12 5.2Z" fill="currentColor"/></svg>
         </button>
-        <button type="button" class="assist-fab" id="assist-open">Помощник</button>
+        <button type="button" class="assist-fab" id="assist-open">Дворецкий</button>
       </div>
       <section class="assist-panel hidden" id="assist-panel" hidden>
         <header class="assist-head">
-          <div><p class="eyebrow">семейный помощник</p><strong>Текстом или голосом</strong></div>
+          <div><p class="eyebrow">семейный дворецкий</p><strong>Текстом или голосом</strong></div>
           <button type="button" class="assist-close" id="assist-close">Закрыть</button>
         </header>
         <div class="assist-log" id="assist-log"></div>
