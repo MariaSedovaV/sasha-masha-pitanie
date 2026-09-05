@@ -35,6 +35,8 @@
       customRations: [],
       rationPatches: {},
       schedules: {},
+      calendar: [],
+      cookingPlan: { rationId: null, title: "", items: [], at: 0 },
       rev: 0,
     };
   }
@@ -99,10 +101,18 @@
     return out;
   }
 
+  function mergeCookingPlan(a, b) {
+    const left = a || { at: 0 };
+    const right = b || { at: 0 };
+    return Number(right.at || 0) >= Number(left.at || 0) ? right : left;
+  }
+
   function mergeState(a, b) {
     const left = a || empty();
     const right = b || empty();
     return {
+      ...left,
+      ...right,
       notes: {
         sasha: mergeItems(left.notes?.sasha, right.notes?.sasha),
         masha: mergeItems(left.notes?.masha, right.notes?.masha),
@@ -115,6 +125,8 @@
       customRations: mergeItems(left.customRations, right.customRations),
       rationPatches: mergeMaps(left.rationPatches, right.rationPatches),
       schedules: mergeMaps(left.schedules, right.schedules),
+      calendar: mergeItems(left.calendar, right.calendar),
+      cookingPlan: mergeCookingPlan(left.cookingPlan, right.cookingPlan),
       rev: Math.max(Number(left.rev || 0), Number(right.rev || 0)),
     };
   }
@@ -149,6 +161,8 @@
       customRations: [],
       rationPatches: {},
       schedules: {},
+      calendar: [],
+      cookingPlan: { rationId: null, title: "", items: [], at: 0 },
       rev: 0,
     };
   }
@@ -179,6 +193,7 @@
     try { if (typeof global.sashaNotesReload === "function") global.sashaNotesReload(); } catch {}
     try { if (typeof global.sashaBudgetReload === "function") global.sashaBudgetReload(); } catch {}
     try { if (typeof global.sashaPitanieReload === "function") global.sashaPitanieReload(); } catch {}
+    try { if (typeof global.sashaCalendarReload === "function") global.sashaCalendarReload(); } catch {}
   }
 
   function parseCloud(text) {
@@ -299,6 +314,8 @@
       customRations: state?.customRations || [],
       rationPatches: state?.rationPatches || {},
       schedules: state?.schedules || {},
+      calendar: state?.calendar || [],
+      cookingPlan: state?.cookingPlan || {},
     });
   }
 
@@ -507,6 +524,26 @@
           ...(s.schedules || {}),
           [String(key)]: { ...(value || {}), updatedAt: Date.now(), at: Date.now() },
         };
+      });
+    },
+    upsertCalendarEvent(event) {
+      return applyPatch((s) => {
+        const next = { ...event, updatedAt: Date.now(), at: event.at || Date.now() };
+        s.calendar = mergeItems(s.calendar, [next]);
+      });
+    },
+    deleteCalendarEvent(id) {
+      return applyPatch((s) => {
+        const item = (s.calendar || []).find((e) => String(e.id) === String(id));
+        if (item) {
+          item.deleted = true;
+          item.updatedAt = Date.now();
+        }
+      });
+    },
+    setCookingPlan(plan) {
+      return applyPatch((s) => {
+        s.cookingPlan = { ...(plan || {}), at: Date.now(), updatedAt: Date.now() };
       });
     },
   };

@@ -439,7 +439,56 @@
     listeners.forEach((fn) => {
       try { fn(); } catch {}
     });
+    publishCookingPlan();
     return global.RATIONS;
+  }
+
+  let publishingPlan = false;
+  function compactPlan(plan) {
+    return JSON.stringify({
+      rationId: plan?.rationId ?? null,
+      title: plan?.title || "",
+      items: plan?.items || [],
+    });
+  }
+  function buildCookingPlan() {
+    const pinned = cloud().pinned?.id;
+    const ration = (global.RATIONS || []).find((r) => String(r.id) === String(pinned));
+    if (!ration) {
+      return { rationId: null, title: "", items: [], at: Date.now() };
+    }
+    const items = [];
+    const seen = new Set();
+    (ration.days || []).forEach((day) => {
+      (day.meals || []).forEach((meal) => {
+        const s = scheduleFor(ration.id, day.id, meal.id);
+        if (!s.cook?.time || s.cook.kind === "none") return;
+        const cookDay = s.cook.dayId || day.id;
+        const key = [cookDay, s.cook.time, meal.id, meal.title, s.cook.cover || ""].join("|");
+        if (seen.has(key)) return;
+        seen.add(key);
+        items.push({
+          weekday: cookDay,
+          time: s.cook.time,
+          mealType: meal.id,
+          title: meal.title,
+          cover: s.cook.cover || "",
+          kind: s.cook.kind || "same-day",
+          eatDay: day.id,
+        });
+      });
+    });
+    return { rationId: ration.id, title: ration.title, items, at: Date.now() };
+  }
+  function publishCookingPlan() {
+    if (publishingPlan) return;
+    if (!global.SashaCloud || typeof global.SashaCloud.setCookingPlan !== "function") return;
+    const plan = buildCookingPlan();
+    if (compactPlan(plan) === compactPlan(cloud().cookingPlan)) return;
+    publishingPlan = true;
+    Promise.resolve(global.SashaCloud.setCookingPlan(plan)).finally(() => {
+      publishingPlan = false;
+    });
   }
 
   function sumDayPerson(day, person) {
@@ -795,6 +844,7 @@
     generateWeeklyRation,
     saveGeneratedRation,
     customRations,
+    publishCookingPlan,
   };
 
   // Capture base rations immediately; patches apply on cloud sync / DOM ready.
