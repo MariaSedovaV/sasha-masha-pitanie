@@ -405,6 +405,8 @@
     });
     $("generateBody").querySelector("[data-close-generate]")?.addEventListener("click", () => closeDialog($("generateDialog")));
   }
+
+  function openScheduleDialog() {
     const { ration, day, meal } = currentContext();
     if (!ration || !day || !meal) return;
     const current = window.SashaEditor.scheduleFor(ration.id, day.id, meal.id);
