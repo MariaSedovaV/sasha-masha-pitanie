@@ -219,7 +219,13 @@
     const s = document.createElement("style");
     s.id = "assist-css";
     s.textContent = `
-.assist-fab{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:80;border:0;background:var(--gold,#d4b483);color:var(--on-accent,#1a140c);border-radius:999px;padding:14px 18px;font:700 12px Montserrat,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.28)}
+.assist-dock{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:80;display:flex;align-items:center;gap:10px}
+.assist-dock.is-panel-open{display:none}
+.assist-to-top{display:grid;place-items:center;width:48px;height:48px;border:1px solid var(--line,rgba(239,232,220,.14));border-radius:999px;background:color-mix(in srgb,var(--card,#171a22) 88%,transparent);color:var(--ink,#efe8dc);cursor:pointer;box-shadow:0 14px 36px rgba(0,0,0,.28);backdrop-filter:blur(12px);transition:opacity .2s ease,transform .2s ease,visibility .2s ease;opacity:0;visibility:hidden;pointer-events:none}
+.assist-to-top.is-visible{opacity:1;visibility:visible;pointer-events:auto}
+.assist-to-top:hover{transform:translateY(-2px);border-color:rgba(212,180,131,.45);color:var(--gold,#d4b483)}
+.assist-to-top svg{width:22px;height:22px;display:block}
+.assist-fab{border:0;background:var(--gold,#d4b483);color:#fff;border-radius:999px;padding:14px 18px;font:700 12px Montserrat,sans-serif;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 16px 40px rgba(0,0,0,.28)}
 .assist-fab.hidden{display:none!important}
 .assist-panel{position:fixed;right:max(16px,env(safe-area-inset-right));bottom:max(16px,env(safe-area-inset-bottom));z-index:85;width:min(420px,calc(100vw - 24px));height:min(560px,calc(100dvh - 24px));display:flex;flex-direction:column;background:var(--panel,rgba(23,26,34,.92));color:var(--ink,#efe8dc);border:1px solid var(--line,rgba(239,232,220,.08));border-radius:24px;backdrop-filter:blur(22px);box-shadow:0 24px 70px rgba(0,0,0,.32);overflow:hidden}
 .assist-panel.hidden{display:none!important}
@@ -236,9 +242,14 @@
 .assist-form{display:grid;gap:8px;padding:0 16px max(16px,env(safe-area-inset-bottom))}
 .assist-form input{width:100%;border:1px solid var(--line,rgba(239,232,220,.08));background:var(--bg,#0b0c10);color:inherit;border-radius:999px;padding:11px 14px;font:500 14px Montserrat,sans-serif;outline:none}
 .assist-mic{border:1px solid var(--gold,#d4b483);background:color-mix(in srgb,var(--gold,#d4b483) 16%,var(--bg,#0b0c10));color:var(--gold-2,#e8d3a8);border-radius:999px;min-height:46px;font:700 12px Montserrat,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;touch-action:none}
-.assist-mic.holding{background:var(--gold,#d4b483);color:var(--on-accent,#1a140c)}
-.assist-form button[type=submit]{border:0;background:var(--gold,#d4b483);color:var(--on-accent,#1a140c);border-radius:999px;min-height:42px;font:700 12px Montserrat,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
-@media (max-width:720px){.assist-panel{right:0;left:0;bottom:0;width:100%;height:min(78dvh,640px);border-radius:24px 24px 0 0}}
+.assist-mic.holding{background:var(--gold,#d4b483);color:#fff}
+.assist-form button[type=submit]{border:0;background:var(--gold,#d4b483);color:#fff;border-radius:999px;min-height:42px;font:700 12px Montserrat,sans-serif;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+@media (max-width:720px){
+  .assist-panel{right:0;left:0;bottom:0;width:100%;height:min(78dvh,640px);border-radius:24px 24px 0 0}
+  .assist-dock{gap:8px}
+  .assist-to-top{width:46px;height:46px}
+}
+html[data-theme="light"] .assist-to-top{background:rgba(255,250,242,.94);color:#1c1915;border-color:rgba(28,25,21,.12)}
 `;
     document.head.appendChild(s);
   }
@@ -247,7 +258,12 @@
     if (document.getElementById("assist-panel")) return;
     const wrap = document.createElement("div");
     wrap.innerHTML = `
-      <button type="button" class="assist-fab" id="assist-open">Помощник</button>
+      <div class="assist-dock" id="assist-dock">
+        <button type="button" class="assist-to-top" id="assist-to-top" aria-label="Наверх" title="Наверх">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5.2 5.6 11.6a1 1 0 0 0 1.4 1.4L11 8.9V19a1 1 0 1 0 2 0V8.9l4 4.1a1 1 0 0 0 1.4-1.4L12 5.2Z" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="assist-fab" id="assist-open">Помощник</button>
+      </div>
       <section class="assist-panel hidden" id="assist-panel" hidden>
         <header class="assist-head">
           <div><p class="eyebrow">семейный помощник</p><strong>Текстом или голосом</strong></div>
@@ -281,7 +297,19 @@
     const mic = document.getElementById("assist-mic");
     const openBtn = document.getElementById("assist-open");
     const closeBtn = document.getElementById("assist-close");
+    const toTopBtn = document.getElementById("assist-to-top");
     if (!panel || !form) return;
+
+    function updateToTopVisibility() {
+      if (!toTopBtn) return;
+      const show = window.scrollY > 280;
+      toTopBtn.classList.toggle("is-visible", show);
+    }
+    toTopBtn?.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+    window.addEventListener("scroll", updateToTopVisibility, { passive: true });
+    updateToTopVisibility();
 
     function addMsg(role, text) {
       const el = document.createElement("div");
@@ -315,6 +343,7 @@
       panel.classList.remove("hidden");
       panel.hidden = false;
       openBtn.classList.add("hidden");
+      document.getElementById("assist-dock")?.classList.add("is-panel-open");
       if (!log.childElementCount) {
         addMsg("bot", "Привет. Могу открыть разделы, добавить дело Саше или Маше и записать трату в категорию этого месяца. Зажмите кнопку и говорите — или напишите.");
       }
@@ -324,6 +353,7 @@
       panel.classList.add("hidden");
       panel.hidden = true;
       openBtn.classList.remove("hidden");
+      document.getElementById("assist-dock")?.classList.remove("is-panel-open");
     });
     form.addEventListener("submit", (e) => {
       e.preventDefault();
