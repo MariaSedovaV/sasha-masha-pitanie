@@ -449,36 +449,48 @@
       rationId: plan?.rationId ?? null,
       title: plan?.title || "",
       items: plan?.items || [],
+      meals: plan?.meals || [],
     });
   }
   function buildCookingPlan() {
     const pinned = cloud().pinned?.id;
     const ration = (global.RATIONS || []).find((r) => String(r.id) === String(pinned));
     if (!ration) {
-      return { rationId: null, title: "", items: [], at: Date.now() };
+      return { rationId: null, title: "", items: [], meals: [], at: Date.now() };
     }
     const items = [];
+    const meals = [];
     const seen = new Set();
     (ration.days || []).forEach((day) => {
       (day.meals || []).forEach((meal) => {
         const s = scheduleFor(ration.id, day.id, meal.id);
-        if (!s.cook?.time || s.cook.kind === "none") return;
-        const cookDay = s.cook.dayId || day.id;
-        const key = [cookDay, s.cook.time, meal.id, meal.title, s.cook.cover || ""].join("|");
-        if (seen.has(key)) return;
-        seen.add(key);
-        items.push({
-          weekday: cookDay,
-          time: s.cook.time,
-          mealType: meal.id,
-          title: meal.title,
-          cover: s.cook.cover || "",
-          kind: s.cook.kind || "same-day",
-          eatDay: day.id,
-        });
+        if (s.cook?.time && s.cook.kind !== "none") {
+          const cookDay = s.cook.dayId || day.id;
+          const key = [cookDay, s.cook.time, meal.id, meal.title, s.cook.cover || ""].join("|");
+          if (!seen.has(key)) {
+            seen.add(key);
+            items.push({
+              weekday: cookDay,
+              time: s.cook.time,
+              mealType: meal.id,
+              title: meal.title,
+              cover: s.cook.cover || "",
+              kind: s.cook.kind || "same-day",
+              eatDay: day.id,
+            });
+          }
+        }
+        if (s.eat?.time) {
+          meals.push({
+            weekday: s.eat.dayId || day.id,
+            time: s.eat.time,
+            mealType: meal.id,
+            title: meal.title,
+          });
+        }
       });
     });
-    return { rationId: ration.id, title: ration.title, items, at: Date.now() };
+    return { rationId: ration.id, title: ration.title, items, meals, at: Date.now() };
   }
   function publishCookingPlan() {
     if (publishingPlan) return;
