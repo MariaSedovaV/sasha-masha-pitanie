@@ -107,7 +107,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?chicken%20healthy%20meal",
             "photoQuery": "chicken healthy meal",
-            "image": "images/photo-chicken.jpg"
+            "image": "images/photo-kimchi-bowl.jpg"
           },
           {
             "id": "Ужин",
@@ -338,7 +338,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?healthy%20breakfast%20bowl",
             "photoQuery": "healthy breakfast bowl",
-            "image": "images/photo-omelette.jpg"
+            "image": "images/photo-poached-spinach.jpg"
           },
           {
             "id": "Обед",
@@ -385,7 +385,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?chicken%20healthy%20meal",
             "photoQuery": "chicken healthy meal",
-            "image": "images/photo-chicken.jpg"
+            "image": "images/photo-kimchi-bowl.jpg"
           },
           {
             "id": "Ужин",
@@ -799,7 +799,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack",
             "photoQuery": "fruit yogurt snack",
-            "image": "images/photo-tofu.jpg"
+            "image": "images/photo-tofu-veg.jpg"
           },
           {
             "id": "Перекус 3",
@@ -1077,7 +1077,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack",
             "photoQuery": "fruit yogurt snack",
-            "image": "images/photo-tofu.jpg"
+            "image": "images/photo-tofu-veg.jpg"
           },
           {
             "id": "Перекус 3",
@@ -1214,7 +1214,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?chicken%20healthy%20meal",
             "photoQuery": "chicken healthy meal",
-            "image": "images/photo-chicken.jpg"
+            "image": "images/photo-kimchi-bowl.jpg"
           },
           {
             "id": "Ужин",
@@ -1492,7 +1492,7 @@ window.RATIONS = [
             },
             "photo": "https://source.unsplash.com/900x650/?chicken%20healthy%20meal",
             "photoQuery": "chicken healthy meal",
-            "image": "images/photo-chicken.jpg"
+            "image": "images/photo-kimchi-bowl.jpg"
           },
           {
             "id": "Ужин",
@@ -2239,7 +2239,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -2522,7 +2522,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -2753,7 +2753,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-baked-toast.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -2936,7 +2936,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -3031,7 +3031,7 @@ window.RATIONS = [
                 "Ккал": 340
               }
             },
-            "image": "images/photo-oatmeal.jpg",
+            "image": "images/photo-pirozhki.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -3214,7 +3214,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -3361,7 +3361,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -3644,7 +3644,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -3974,7 +3974,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -4391,7 +4391,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -5245,7 +5245,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -5585,7 +5585,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -5632,7 +5632,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -5878,7 +5878,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -5925,7 +5925,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -6161,7 +6161,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -6297,7 +6297,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -6615,7 +6615,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -6662,7 +6662,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -6950,7 +6950,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -7191,7 +7191,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -7809,7 +7809,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -8087,7 +8087,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -8308,7 +8308,7 @@ window.RATIONS = [
                 "Ккал": 340
               }
             },
-            "image": "images/photo-oatmeal.jpg",
+            "image": "images/photo-pirozhki.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -8491,7 +8491,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -8834,7 +8834,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -10219,7 +10219,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -10601,7 +10601,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -10983,7 +10983,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -11544,7 +11544,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -12162,7 +12162,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -12440,7 +12440,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -12728,7 +12728,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -13266,7 +13266,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -13355,7 +13355,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -13549,7 +13549,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -13638,7 +13638,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -13790,7 +13790,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -13837,7 +13837,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -14068,7 +14068,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -14115,7 +14115,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -14346,7 +14346,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -14582,7 +14582,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -14629,7 +14629,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -15048,7 +15048,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -15418,7 +15418,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -15465,7 +15465,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -15706,7 +15706,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -15753,7 +15753,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -15932,7 +15932,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -15984,7 +15984,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -16031,7 +16031,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -16272,7 +16272,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -16319,7 +16319,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -16602,7 +16602,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -16880,7 +16880,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -17064,7 +17064,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -17505,7 +17505,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -17788,7 +17788,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -18632,7 +18632,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -19203,7 +19203,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -20255,7 +20255,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -20349,7 +20349,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -20438,7 +20438,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -20637,7 +20637,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -20726,7 +20726,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -20821,7 +20821,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -20868,7 +20868,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -21151,7 +21151,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -21481,7 +21481,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -21982,7 +21982,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -22071,7 +22071,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -22265,7 +22265,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -22354,7 +22354,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -22501,7 +22501,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -22789,7 +22789,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -23124,7 +23124,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -23318,7 +23318,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -23412,7 +23412,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -23653,7 +23653,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -24087,7 +24087,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -24139,7 +24139,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -24422,7 +24422,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -24941,7 +24941,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -25507,7 +25507,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -26256,7 +26256,7 @@ window.RATIONS = [
                 "Ккал": 340
               }
             },
-            "image": "images/photo-oatmeal.jpg",
+            "image": "images/photo-pirozhki.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -26434,7 +26434,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -26539,7 +26539,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-omelette.jpg",
+            "image": "images/photo-poached-spinach.jpg",
             "photoQuery": "healthy breakfast bowl",
             "photo": "https://source.unsplash.com/900x650/?healthy%20breakfast%20bowl"
           },
@@ -26717,7 +26717,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -27100,7 +27100,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -27430,7 +27430,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -27713,7 +27713,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -28492,7 +28492,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -28539,7 +28539,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -28728,7 +28728,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -28775,7 +28775,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -28822,7 +28822,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -29001,7 +29001,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -30917,7 +30917,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -31190,7 +31190,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -31284,7 +31284,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -31567,7 +31567,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -32039,7 +32039,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -32379,7 +32379,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -32880,7 +32880,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -32927,7 +32927,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -33163,7 +33163,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -33210,7 +33210,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -33451,7 +33451,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -33724,7 +33724,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -33955,7 +33955,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -34049,7 +34049,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -34138,7 +34138,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -34233,7 +34233,7 @@ window.RATIONS = [
                 "Ккал": 340
               }
             },
-            "image": "images/photo-oatmeal.jpg",
+            "image": "images/photo-pirozhki.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -34327,7 +34327,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -34416,7 +34416,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -34568,7 +34568,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -35002,7 +35002,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -35049,7 +35049,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -35332,7 +35332,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -36134,7 +36134,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -36181,7 +36181,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -36464,7 +36464,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -36690,7 +36690,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -36784,7 +36784,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -37211,7 +37211,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -37305,7 +37305,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -37588,7 +37588,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -37871,7 +37871,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -38149,7 +38149,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -38904,7 +38904,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -39395,7 +39395,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-omelette.jpg",
+            "image": "images/photo-poached-spinach.jpg",
             "photoQuery": "healthy breakfast bowl",
             "photo": "https://source.unsplash.com/900x650/?healthy%20breakfast%20bowl"
           },
@@ -39489,7 +39489,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -39578,7 +39578,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -39772,7 +39772,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -39861,7 +39861,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -40008,7 +40008,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -40301,7 +40301,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-kimchi-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -40631,7 +40631,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -40720,7 +40720,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -40919,7 +40919,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -41008,7 +41008,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -41155,7 +41155,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-fish-rice.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -41693,7 +41693,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -41782,7 +41782,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -41976,7 +41976,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -42065,7 +42065,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -42264,7 +42264,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -42448,7 +42448,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -42542,7 +42542,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -42820,7 +42820,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -43103,7 +43103,7 @@ window.RATIONS = [
                 "Ккал": 310
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-bake.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -43339,7 +43339,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -43475,7 +43475,7 @@ window.RATIONS = [
                 "Ккал": 210
               }
             },
-            "image": "images/photo-tofu.jpg",
+            "image": "images/photo-tofu-veg.jpg",
             "photoQuery": "fruit yogurt snack",
             "photo": "https://source.unsplash.com/900x650/?fruit%20yogurt%20snack"
           },
@@ -43867,7 +43867,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -44155,7 +44155,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -44391,7 +44391,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-golubtsy.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -44438,7 +44438,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -44617,7 +44617,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -44664,7 +44664,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-golubtsy.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -44711,7 +44711,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -44942,7 +44942,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-pasta.jpg",
+            "image": "images/photo-salmon-pasta.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -44989,7 +44989,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -45225,7 +45225,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-pasta.jpg",
+            "image": "images/photo-salmon-pasta.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -45272,7 +45272,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -45466,7 +45466,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-khachapuri.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -45972,7 +45972,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -46019,7 +46019,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -46297,7 +46297,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -46533,7 +46533,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -46585,7 +46585,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-tuna-wrap.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -46632,7 +46632,7 @@ window.RATIONS = [
                 "Ккал": 280
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-shrimp-salad.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -46873,7 +46873,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-tuna-wrap.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -46920,7 +46920,7 @@ window.RATIONS = [
                 "Ккал": 280
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-shrimp-salad.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -47104,7 +47104,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -47151,7 +47151,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -47198,7 +47198,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -47434,7 +47434,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -47481,7 +47481,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -47670,7 +47670,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -48223,7 +48223,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -48270,7 +48270,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -48454,7 +48454,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -48501,7 +48501,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -48548,7 +48548,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-turkey.jpg",
+            "image": "images/photo-cutlets.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -48836,7 +48836,7 @@ window.RATIONS = [
                 "Ккал": 280
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-shrimp-salad.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -49124,7 +49124,7 @@ window.RATIONS = [
                 "Ккал": 280
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-shrimp-salad.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -49308,7 +49308,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-croissant.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -49355,7 +49355,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -49402,7 +49402,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-pasta.jpg",
+            "image": "images/photo-eggplant.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -49596,7 +49596,7 @@ window.RATIONS = [
                 "Ккал": 330
               }
             },
-            "image": "images/photo-toast.jpg",
+            "image": "images/photo-buckwheat.jpg",
             "photoQuery": "healthy breakfast toast",
             "photo": "https://source.unsplash.com/900x650/?healthy%2520breakfast%2520toast"
           },
@@ -49643,7 +49643,7 @@ window.RATIONS = [
                 "Ккал": 440
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-quinoa-bowl.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -49690,7 +49690,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-pasta.jpg",
+            "image": "images/photo-eggplant.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },
@@ -49936,7 +49936,7 @@ window.RATIONS = [
                 "Ккал": 430
               }
             },
-            "image": "images/photo-fish.jpg",
+            "image": "images/photo-tuna-wrap.jpg",
             "photoQuery": "chicken healthy meal",
             "photo": "https://source.unsplash.com/900x650/?chicken%2520healthy%2520meal"
           },
@@ -49983,7 +49983,7 @@ window.RATIONS = [
                 "Ккал": 300
               }
             },
-            "image": "images/photo-chicken.jpg",
+            "image": "images/photo-chicken-cheese.jpg",
             "photoQuery": "beef vegetables dinner",
             "photo": "https://source.unsplash.com/900x650/?beef%2520vegetables%2520dinner"
           },

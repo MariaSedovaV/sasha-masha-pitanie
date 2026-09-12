@@ -459,12 +459,38 @@ function escapeSvgText(value){
   return String(value || '').replace(/[&<>]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[ch]));
 }
 
+const MEAL_PHOTO_BY_TITLE = [
+  [/сырник.*рикот|ricotta.*syrnik/i, 'images/photo-syrniki-ricotta.jpg'],
+  [/сырник|оладь|syrmik/i, 'images/photo-syrmiki.jpg'],
+  [/хачапур/i, 'images/photo-khachapuri.jpg'],
+  [/круассан/i, 'images/photo-croissant.jpg'],
+  [/пирожк|ватрушк/i, 'images/photo-pirozhki.jpg'],
+  [/пашот|шпинат/i, 'images/photo-poached-spinach.jpg'],
+  [/гречк.*(боул|плов)|боул с гречк/i, 'images/photo-buckwheat.jpg'],
+  [/киноа/i, 'images/photo-quinoa-bowl.jpg'],
+  [/кимчи/i, 'images/photo-kimchi-bowl.jpg'],
+  [/моцарелл|под сыром|кабачк.*сыр/i, 'images/photo-chicken-cheese.jpg'],
+  [/голубц/i, 'images/photo-golubtsy.jpg'],
+  [/котлет/i, 'images/photo-cutlets.jpg'],
+  [/баклажан|лазань/i, 'images/photo-eggplant.jpg'],
+  [/паста.*лосос|лосос.*паст/i, 'images/photo-salmon-pasta.jpg'],
+  [/тунц|конвертик/i, 'images/photo-tuna-wrap.jpg'],
+  [/креветк/i, 'images/photo-shrimp-salad.jpg'],
+  [/рыба.*рис|рис.*рыб/i, 'images/photo-fish-rice.jpg'],
+  [/бутерброд|тост/i, 'images/photo-baked-toast.jpg'],
+  [/тофу.*кабач|кабач.*тофу/i, 'images/photo-tofu-veg.jpg'],
+  [/запечённая курица|запеченная курица/i, 'images/photo-chicken-bake.jpg'],
+];
+
 function photoUrl(meal){
+  const title = String(meal?.title || '');
+  const byTitle = MEAL_PHOTO_BY_TITLE.find(([re]) => re.test(title));
+  if (byTitle) return byTitle[1];
   const image = String(meal?.image || '');
   if (/images\/photo-/.test(image)) return image;
   const text = `${meal.id || ''} ${meal.title || ''} ${meal.photoQuery || ''} ${meal.dish?.Саша || ''} ${meal.dish?.Маша || ''}`;
   const pic = FOOD_PICTURES.find(item => item.test.test(text));
-  const title = escapeSvgText(meal.title || pic.label);
+  const safeTitle = escapeSvgText(meal.title || pic.label);
   const mealName = escapeSvgText(meal.id || 'Приём пищи');
   const [a, b] = pic.colors;
   const svg = `
@@ -478,7 +504,7 @@ function photoUrl(meal){
       <rect width="1100" height="650" rx="44" fill="url(#bg)"/>
       <text x="550" y="300" text-anchor="middle" font-size="138">${pic.emoji}</text>
       <text x="550" y="378" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="700" fill="#efeae2">${mealName}</text>
-      <text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#c6a56a">${title}</text>
+      <text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#c6a56a">${safeTitle}</text>
     </svg>`;
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }

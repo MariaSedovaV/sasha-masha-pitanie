@@ -36,6 +36,16 @@
     "Перекус 3": "21:00",
   };
 
+  const BREAKFAST_BY_DAY = {
+    ПН: { cook: "06:15", eat: "06:40" },
+    ВТ: { cook: "06:15", eat: "06:40" },
+    СР: { cook: "06:15", eat: "06:40" },
+    ЧТ: { cook: "06:15", eat: "06:40" },
+    ПТ: { cook: "06:15", eat: "06:40" },
+    СБ: { cook: "09:30", eat: "10:30" },
+    ВС: { cook: "09:30", eat: "10:30" },
+  };
+
   const DAY_LABEL = {
     ПН: "понедельник",
     ВТ: "вторник",
@@ -585,24 +595,25 @@
   }
 
   function defaultSchedule(dayId, mealId) {
-    const eatTime = EAT_TIMES[mealId] || "12:00";
     const isMain = mealId === "Обед" || mealId === "Ужин";
     const isBreakfast = mealId === "Завтрак";
     if (isBreakfast) {
+      const slot = BREAKFAST_BY_DAY[dayId] || BREAKFAST_BY_DAY.ПН;
       return {
         cook: {
-          label: `Готовить в ${DAY_LABEL[dayId] || dayId} · 07:30`,
-          time: "07:30",
+          label: `Готовить в ${DAY_LABEL[dayId] || dayId} · ${slot.cook}`,
+          time: slot.cook,
           dayId,
           kind: "same-day",
         },
         eat: {
-          label: `Есть в ${eatTime}`,
-          time: eatTime,
+          label: `Есть в ${slot.eat}`,
+          time: slot.eat,
           dayId,
         },
       };
     }
+    const eatTime = EAT_TIMES[mealId] || "12:00";
     if (isMain) {
       const block = COOK_BLOCKS[dayId] || COOK_BLOCKS.ВС;
       return {
@@ -635,16 +646,29 @@
     };
   }
 
+  function isLegacyBreakfastSchedule(custom) {
+    if (!custom) return true;
+    const cook = String(custom.cook?.time || "");
+    const eat = String(custom.eat?.time || "");
+    // old defaults before weekday/weekend training schedule
+    return (cook === "07:30" || cook === "07:00" || cook === "08:00") &&
+      (eat === "08:00" || eat === "07:30" || eat === "07:00" || !eat);
+  }
+
   function scheduleFor(rationId, dayId, mealId) {
     const key = `r${rationId}|${dayId}|${mealId}`;
     const custom = cloud().schedules?.[key];
+    const defaults = defaultSchedule(dayId, mealId);
+    if (mealId === "Завтрак" && isLegacyBreakfastSchedule(custom)) {
+      return defaults;
+    }
     if (custom && !custom.deleted) {
       return {
-        cook: custom.cook || defaultSchedule(dayId, mealId).cook,
-        eat: custom.eat || defaultSchedule(dayId, mealId).eat,
+        cook: custom.cook || defaults.cook,
+        eat: custom.eat || defaults.eat,
       };
     }
-    return defaultSchedule(dayId, mealId);
+    return defaults;
   }
 
   function scheduleMarkersHtml(rationId, dayId, mealId) {
