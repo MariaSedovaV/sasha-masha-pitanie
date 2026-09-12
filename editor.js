@@ -37,13 +37,13 @@
   };
 
   const BREAKFAST_BY_DAY = {
-    ПН: { cook: "06:15", eat: "06:40" },
-    ВТ: { cook: "06:15", eat: "06:40" },
-    СР: { cook: "06:15", eat: "06:40" },
-    ЧТ: { cook: "06:15", eat: "06:40" },
-    ПТ: { cook: "06:15", eat: "06:40" },
-    СБ: { cook: "09:30", eat: "10:30" },
-    ВС: { cook: "09:30", eat: "10:30" },
+    ПН: { cook: "06:15", eat: "06:30" },
+    ВТ: { cook: "06:15", eat: "06:30" },
+    СР: { cook: "06:15", eat: "06:30" },
+    ЧТ: { cook: "06:15", eat: "06:30" },
+    ПТ: { cook: "06:15", eat: "06:30" },
+    СБ: { cook: "09:30", eat: "10:00" },
+    ВС: { cook: "09:30", eat: "10:00" },
   };
 
   const DAY_LABEL = {
@@ -650,9 +650,12 @@
     if (!custom) return true;
     const cook = String(custom.cook?.time || "");
     const eat = String(custom.eat?.time || "");
-    // old defaults before weekday/weekend training schedule
-    return (cook === "07:30" || cook === "07:00" || cook === "08:00") &&
-      (eat === "08:00" || eat === "07:30" || eat === "07:00" || !eat);
+    const legacyPairs = new Set([
+      "07:30|08:00", "07:30|07:30", "07:00|07:00", "08:00|08:00",
+      "06:15|06:40", "09:30|10:30", // previous auto defaults
+      "|08:00", "07:30|",
+    ]);
+    return legacyPairs.has(`${cook}|${eat}`) || (!cook && !eat);
   }
 
   function scheduleFor(rationId, dayId, mealId) {
