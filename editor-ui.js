@@ -516,6 +516,9 @@
             dayId: day.id,
           },
         });
+        if (typeof window.SashaEditor?.publishCookingPlan === "function") {
+          window.SashaEditor.publishCookingPlan(true);
+        }
         toast("График сохранён на всех устройствах");
         closeDialog($("scheduleDialog"));
         if (typeof window.renderMealDetail === "function") window.renderMealDetail();

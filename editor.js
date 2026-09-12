@@ -487,6 +487,7 @@
               cover: s.cook.cover || "",
               kind: s.cook.kind || "same-day",
               eatDay: day.id,
+              who: "masha",
             });
           }
         }
@@ -496,17 +497,18 @@
             time: s.eat.time,
             mealType: meal.id,
             title: meal.title,
+            who: "",
           });
         }
       });
     });
     return { rationId: ration.id, title: ration.title, items, meals, at: Date.now() };
   }
-  function publishCookingPlan() {
+  function publishCookingPlan(force) {
     if (publishingPlan) return;
     if (!global.SashaCloud || typeof global.SashaCloud.setCookingPlan !== "function") return;
     const plan = buildCookingPlan();
-    if (compactPlan(plan) === compactPlan(cloud().cookingPlan)) return;
+    if (!force && compactPlan(plan) === compactPlan(cloud().cookingPlan)) return;
     publishingPlan = true;
     Promise.resolve(global.SashaCloud.setCookingPlan(plan)).finally(() => {
       publishingPlan = false;
@@ -894,6 +896,8 @@
   function bootEditor() {
     ensureBase();
     refreshRations();
+    // Первый проход: принудительно выгрузить план с who (готовка → Маша, приёмы → общие).
+    publishCookingPlan(true);
   }
 
   if (document.readyState === "loading") {
