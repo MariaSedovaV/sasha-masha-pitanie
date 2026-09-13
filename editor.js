@@ -896,8 +896,8 @@
   function bootEditor() {
     ensureBase();
     refreshRations();
-    // Первый проход: принудительно выгрузить план с who (готовка → Маша, приёмы → общие).
-    publishCookingPlan(true);
+    // Публикуем план только если содержимое реально устарело (без force-шторма на каждый заход).
+    publishCookingPlan();
   }
 
   if (document.readyState === "loading") {
@@ -907,7 +907,13 @@
   }
 
   if (global.SashaCloud && typeof global.SashaCloud.subscribe === "function") {
+    let lastPitanieSig = "";
     global.SashaCloud.subscribe(() => {
+      const sig = typeof global.SashaCloud.pitanieSig === "function"
+        ? global.SashaCloud.pitanieSig()
+        : String(Date.now());
+      if (sig === lastPitanieSig) return;
+      lastPitanieSig = sig;
       refreshRations();
     });
   }

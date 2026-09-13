@@ -482,31 +482,30 @@ const MEAL_PHOTO_BY_TITLE = [
   [/запечённая курица|запеченная курица/i, 'images/photo-chicken-bake.jpg'],
 ];
 
+const photoUrlCache = new Map();
 function photoUrl(meal){
+  const cacheKey = [meal?.id || '', meal?.title || '', meal?.image || '', meal?.photoQuery || ''].join('|');
+  if(photoUrlCache.has(cacheKey)) return photoUrlCache.get(cacheKey);
   const title = String(meal?.title || '');
   const byTitle = MEAL_PHOTO_BY_TITLE.find(([re]) => re.test(title));
-  if (byTitle) return byTitle[1];
+  if (byTitle) {
+    photoUrlCache.set(cacheKey, byTitle[1]);
+    return byTitle[1];
+  }
   const image = String(meal?.image || '');
-  if (/images\/photo-/.test(image)) return image;
+  if (/images\/photo-/.test(image)) {
+    photoUrlCache.set(cacheKey, image);
+    return image;
+  }
   const text = `${meal.id || ''} ${meal.title || ''} ${meal.photoQuery || ''} ${meal.dish?.Саша || ''} ${meal.dish?.Маша || ''}`;
   const pic = FOOD_PICTURES.find(item => item.test.test(text));
   const safeTitle = escapeSvgText(meal.title || pic.label);
   const mealName = escapeSvgText(meal.id || 'Приём пищи');
   const [a, b] = pic.colors;
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 650">
-      <defs>
-        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stop-color="${a}"/>
-          <stop offset="1" stop-color="${b}"/>
-        </linearGradient>
-      </defs>
-      <rect width="1100" height="650" rx="44" fill="url(#bg)"/>
-      <text x="550" y="300" text-anchor="middle" font-size="138">${pic.emoji}</text>
-      <text x="550" y="378" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="700" fill="#efeae2">${mealName}</text>
-      <text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#c6a56a">${safeTitle}</text>
-    </svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 650"><defs><linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="1100" height="650" rx="44" fill="url(#bg)"/><text x="550" y="300" text-anchor="middle" font-size="138">${pic.emoji}</text><text x="550" y="378" text-anchor="middle" font-size="42" font-family="Arial, sans-serif" font-weight="700" fill="#efeae2">${mealName}</text><text x="550" y="430" text-anchor="middle" font-size="34" font-family="Arial, sans-serif" fill="#c6a56a">${safeTitle}</text></svg>`;
+  const url = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+  photoUrlCache.set(cacheKey, url);
+  return url;
 }
 
 function renderHome(){
@@ -608,32 +607,85 @@ function scrollActiveDayTab(){
   const active = document.querySelector('.day-tab.active');
   active?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
-function renderDays(){
-  $('dayTabs').innerHTML = state.ration.days.map((d,i)=>`<button class="day-tab ${i===state.dayIndex?'active':''}" data-i="${i}"><span class="day-tab-short">${d.id}</span><span class="day-tab-full">${d.name}</span></button>`).join('');
-  document.querySelectorAll('.day-tab').forEach(btn => btn.addEventListener('click',()=>{state.dayIndex=Number(btn.dataset.i); state.mealIndex=0; renderDays(); renderMeals(); renderMealDetail();}));
-  scrollActiveDayTab();
+let dayTabsBound = false;
+function renderDays(opts = {}){
+  const keepScroll = !!opts.keepScroll;
+  const host = $('dayTabs');
+  if(!host || !state.ration) return;
+  host.innerHTML = state.ration.days.map((d,i)=>`<button type="button" class="day-tab ${i===state.dayIndex?'active':''}" data-i="${i}"><span class="day-tab-short">${d.id}</span><span class="day-tab-full">${d.name}</span></button>`).join('');
+  if(!dayTabsBound){
+    dayTabsBound = true;
+    host.addEventListener('click', (e) => {
+      const btn = e.target.closest('.day-tab');
+      if(!btn || !host.contains(btn)) return;
+      const i = Number(btn.dataset.i);
+      if(Number.isNaN(i) || i === state.dayIndex) return;
+      state.dayIndex = i;
+      state.mealIndex = 0;
+      renderDays();
+      renderMeals();
+      renderMealDetail();
+    });
+  }
+  if(!keepScroll) scrollActiveDayTab();
 }
 function scrollActiveMealBtn(){
   if(!isMobileView()) return;
   const active = document.querySelector('.meal-btn.active');
   active?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
 }
-function renderMeals(){
-  const day = state.ration.days[state.dayIndex];
-  $('selectedDayTitle').textContent = day.name;
-  $('mealButtons').innerHTML = day.meals.map((m,i) => {
-    const macros = m.macros?.Саша || Object.values(m.macros || {})[0] || {};
-    const schedule = window.SashaEditor?.scheduleFor?.(state.ration.id, day.id, m.id);
-    const eat = schedule?.eat?.time ? ` · ${schedule.eat.time}` : '';
-    return `<button class="meal-btn ${i===state.mealIndex?'active':''}" data-i="${i}">
-      <img src="${photoUrl(m)}" alt="">
+let mealButtonsBound = false;
+function mealBtnHtml(m, i, day){
+  const macros = m.macros?.Саша || Object.values(m.macros || {})[0] || {};
+  const schedule = window.SashaEditor?.scheduleFor?.(state.ration.id, day.id, m.id);
+  const eat = schedule?.eat?.time ? ` · ${schedule.eat.time}` : '';
+  return `<button type="button" class="meal-btn ${i===state.mealIndex?'active':''}" data-i="${i}">
+      <img src="${photoUrl(m)}" alt="" decoding="async" draggable="false">
       <span class="meal-btn-copy"><strong>${m.id}</strong><span>${m.title}</span><small>${macros.Ккал || '—'} ккал · Б ${macros.Белки || '—'}${eat}</small></span>
     </button>`;
-  }).join('');
-  document.querySelectorAll('.meal-btn').forEach(btn => btn.addEventListener('click',()=>{state.mealIndex=Number(btn.dataset.i); renderMeals(); renderMealDetail();}));
+}
+function renderMeals(opts = {}){
+  const keepScroll = !!opts.keepScroll;
+  const soft = !!opts.soft;
+  const day = state.ration?.days?.[state.dayIndex];
+  const host = $('mealButtons');
+  if(!day || !host) return;
+  $('selectedDayTitle').textContent = day.name;
+  const nextHtml = day.meals.map((m,i) => mealBtnHtml(m, i, day));
+  if(soft && host.children.length === day.meals.length){
+    day.meals.forEach((m, i) => {
+      const btn = host.children[i];
+      if(!btn) return;
+      btn.classList.toggle('active', i === state.mealIndex);
+      const img = btn.querySelector('img');
+      const src = photoUrl(m);
+      if(img && img.getAttribute('src') !== src) img.setAttribute('src', src);
+      const copy = btn.querySelector('.meal-btn-copy');
+      if(copy){
+        const macros = m.macros?.Саша || Object.values(m.macros || {})[0] || {};
+        const schedule = window.SashaEditor?.scheduleFor?.(state.ration.id, day.id, m.id);
+        const eat = schedule?.eat?.time ? ` · ${schedule.eat.time}` : '';
+        copy.innerHTML = `<strong>${m.id}</strong><span>${m.title}</span><small>${macros.Ккал || '—'} ккал · Б ${macros.Белки || '—'}${eat}</small>`;
+      }
+    });
+  } else {
+    host.innerHTML = nextHtml.join('');
+  }
+  if(!mealButtonsBound){
+    mealButtonsBound = true;
+    host.addEventListener('click', (e) => {
+      const btn = e.target.closest('.meal-btn');
+      if(!btn || !host.contains(btn)) return;
+      const i = Number(btn.dataset.i);
+      if(Number.isNaN(i) || i === state.mealIndex) return;
+      state.mealIndex = i;
+      renderMeals();
+      renderMealDetail();
+    });
+  }
   const totals = $('dayMacros');
   if(totals) totals.innerHTML = dayMacroCardsHtml(day);
-  scrollActiveMealBtn();
+  if(!keepScroll) scrollActiveMealBtn();
 }
 function macroDistance(mealA, mealB, person){
   const weights = { Ккал: 1, Белки: 3, Жиры: 2, Углеводы: 1 };
@@ -716,7 +768,7 @@ function mealDetailHtml(ref, options = {}){
   return {
     key,
     html: `
-    <div class="meal-photo"><div class="fallback">🍽️</div><img src="${img}" alt="${meal.title}" loading="lazy" onerror="this.style.display='none'"></div>
+    <div class="meal-photo"><div class="fallback">🍽️</div><img src="${img}" alt="${meal.title}" decoding="async" fetchpriority="high" onerror="this.style.display='none'"></div>
     <div class="meal-body">
       <div class="meal-heading-row">
         <div><p class="eyebrow">${day.name} · ${meal.id}</p><h2>${meal.title}</h2><p class="meal-meta">Рацион ${ration.id}</p></div>
@@ -739,15 +791,65 @@ function bindFavoriteBtn(container, key, rerender){
     rerender();
   });
 }
-function renderMealDetail(){
+function renderMealDetail(opts = {}){
+  const soft = !!opts.soft;
   const meal = currentMeal();
   const day = currentDay();
-  if(!meal || !day) return;
+  if(!meal || !day || !state.ration) return;
   const ref = { meal, day, ration: state.ration };
   const { key, html } = mealDetailHtml(ref);
-  $('mealDetail').innerHTML = html;
-  bindFavoriteBtn($('mealDetail'), key, renderMealDetail);
-  window.SashaEditorUI?.bindEditToolbar?.($('mealDetail'));
+  const fp = key + '\n' + html;
+  if(soft && state._mealDetailFp === fp) return;
+  const y = window.scrollY;
+  const box = $('mealDetail');
+  if(!box) return;
+  if(soft && state._mealDetailKey === key){
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    const oldImg = box.querySelector('.meal-photo img');
+    const newImg = tmp.querySelector('.meal-photo img');
+    if(oldImg && newImg && oldImg.getAttribute('src') === newImg.getAttribute('src')){
+      newImg.replaceWith(oldImg);
+    }
+    box.replaceChildren(...tmp.childNodes);
+  } else {
+    box.innerHTML = html;
+  }
+  state._mealDetailFp = fp;
+  state._mealDetailKey = key;
+  bindFavoriteBtn(box, key, () => renderMealDetail());
+  window.SashaEditorUI?.bindEditToolbar?.(box);
+  if(soft){
+    requestAnimationFrame(() => {
+      if(Math.abs(window.scrollY - y) > 2) window.scrollTo(0, y);
+    });
+  }
+}
+function softRefreshRationView(){
+  if(!state.ration || document.body.classList.contains('on-home')) return;
+  const id = state.ration.id;
+  const next = window.RATIONS.find(r => r.id === id || String(r.id) === String(id));
+  if(!next){
+    renderHome();
+    return;
+  }
+  state.ration = next;
+  if(state.dayIndex >= next.days.length) state.dayIndex = 0;
+  const day = next.days[state.dayIndex];
+  if(!day?.meals?.length) state.mealIndex = 0;
+  else if(state.mealIndex >= day.meals.length) state.mealIndex = 0;
+  const y = window.scrollY;
+  $('pageTitle').textContent = state.ration.title;
+  $('rationNumber').textContent = state.ration.custom ? 'Собранный рацион' : `Рацион ${state.ration.id}`;
+  $('rationTitle').textContent = state.ration.title;
+  $('rationSubtitle').textContent = state.ration.subtitle;
+  renderDays({ keepScroll: true });
+  renderMeals({ keepScroll: true, soft: true });
+  renderMealDetail({ soft: true });
+  window.SashaEditorUI?.syncEditModeUi?.();
+  requestAnimationFrame(() => {
+    if(Math.abs(window.scrollY - y) > 2) window.scrollTo(0, y);
+  });
 }
 function openShopping(){
   const r = state.ration;
@@ -994,15 +1096,10 @@ window.sashaPitanieReload = function(){
       state.pinnedId = Number.isNaN(n) ? pin : n;
     }
   } catch { state.pinnedId = null; }
-  if(window.SashaEditor?.refreshRations) window.SashaEditor.refreshRations();
+  // refreshRations уже вызван из SashaCloud.subscribe при pitanie-изменениях
   updateFavoritesCount();
   if(document.body.classList.contains('on-home')) renderHome();
-  else if(state.ration){
-    const id = state.ration.id;
-    const dayIndex = state.dayIndex;
-    const mealIndex = state.mealIndex;
-    openRation(id, dayIndex, mealIndex, { silent: true });
-  }
+  else softRefreshRationView();
 };
 
 window.state = state;
@@ -1011,5 +1108,6 @@ window.renderMeals = renderMeals;
 window.renderDays = renderDays;
 window.openRation = openRation;
 window.renderHome = renderHome;
+window.softRefreshRationView = softRefreshRationView;
 
 boot();

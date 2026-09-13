@@ -189,14 +189,25 @@
     cloudStatus = { ok: !!ok, error: error || "", at: Date.now() };
   }
 
+  let lastPitanieCore = "";
+  let pitanieReloadTimer = 0;
   function notify() {
+    const snap = clone(snapshot);
     listeners.forEach((fn) => {
-      try { fn(clone(snapshot)); } catch {}
+      try { fn(snap); } catch {}
     });
     try { if (typeof global.sashaNotesReload === "function") global.sashaNotesReload(); } catch {}
     try { if (typeof global.sashaBudgetReload === "function") global.sashaBudgetReload(); } catch {}
-    try { if (typeof global.sashaPitanieReload === "function") global.sashaPitanieReload(); } catch {}
     try { if (typeof global.sashaCalendarReload === "function") global.sashaCalendarReload(); } catch {}
+    // Питание перерисовываем только при реальных изменениях рациона/графика — не из‑за календаря/заметок.
+    const nextPitanie = pitanieCore(snapshot);
+    if (nextPitanie === lastPitanieCore) return;
+    lastPitanieCore = nextPitanie;
+    if (pitanieReloadTimer) clearTimeout(pitanieReloadTimer);
+    pitanieReloadTimer = setTimeout(() => {
+      pitanieReloadTimer = 0;
+      try { if (typeof global.sashaPitanieReload === "function") global.sashaPitanieReload(); } catch {}
+    }, 80);
   }
 
   function parseCloud(text) {
@@ -306,6 +317,16 @@
     return run;
   }
 
+  function stableCookingPlan(plan) {
+    if (!plan || typeof plan !== "object") return {};
+    return {
+      rationId: plan.rationId ?? null,
+      title: plan.title || "",
+      items: plan.items || [],
+      meals: plan.meals || [],
+    };
+  }
+
   function core(state) {
     return JSON.stringify({
       notes: state?.notes || {},
@@ -319,7 +340,21 @@
       schedules: state?.schedules || {},
       calendar: state?.calendar || [],
       calendarRepeat: state?.calendarRepeat || {},
-      cookingPlan: state?.cookingPlan || {},
+      // без at/updatedAt — иначе каждый publish дергает UI каждые 4 с
+      cookingPlan: stableCookingPlan(state?.cookingPlan),
+    });
+  }
+
+  function pitanieCore(state) {
+    return JSON.stringify({
+      favorites: state?.favorites || {},
+      pinned: state?.pinned || {},
+      users: state?.users || [],
+      customMeals: state?.customMeals || [],
+      customRations: state?.customRations || [],
+      rationPatches: state?.rationPatches || {},
+      schedules: state?.schedules || {},
+      cookingPlan: stableCookingPlan(state?.cookingPlan),
     });
   }
 
@@ -368,24 +403,26 @@
     });
     setInterval(() => {
       enqueue(async () => {
-        const before = JSON.stringify(snapshot);
+        const before = core(snapshot);
         const beforeStatus = cloudStatus.ok + cloudStatus.error;
         await pullMergePush();
-        if (JSON.stringify(snapshot) !== before || beforeStatus !== cloudStatus.ok + cloudStatus.error) notify();
+        if (core(snapshot) !== before || beforeStatus !== cloudStatus.ok + cloudStatus.error) notify();
       });
     }, 4000);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
         enqueue(async () => {
+          const before = core(snapshot);
           await pullMergePush();
-          notify();
+          if (core(snapshot) !== before) notify();
         });
       }
     });
     global.addEventListener("online", () => {
       enqueue(async () => {
+        const before = core(snapshot);
         await pullMergePush();
-        notify();
+        if (core(snapshot) !== before) notify();
       });
     });
   }
@@ -394,6 +431,11 @@
     return enqueue(async () => {
       const next = clone(snapshot);
       mutator(next);
+      if (core(next) === core(snapshot)) {
+        // Метаданные вроде rev могли не входить в core — всё равно не шумим в UI.
+        persistLocal(next);
+        return snapshot;
+      }
       persistLocal(next);
       notify();
       await pullMergePush(next);
@@ -581,9 +623,16 @@
       });
     },
     setCookingPlan(plan) {
+      const next = { ...(plan || {}), at: Date.now(), updatedAt: Date.now() };
+      if (JSON.stringify(stableCookingPlan(snapshot?.cookingPlan)) === JSON.stringify(stableCookingPlan(next))) {
+        return Promise.resolve(clone(snapshot));
+      }
       return applyPatch((s) => {
-        s.cookingPlan = { ...(plan || {}), at: Date.now(), updatedAt: Date.now() };
+        s.cookingPlan = next;
       });
+    },
+    pitanieSig() {
+      return pitanieCore(snapshot);
     },
   };
 

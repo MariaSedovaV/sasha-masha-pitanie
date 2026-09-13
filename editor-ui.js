@@ -598,8 +598,9 @@
     syncEditModeUi();
     window.SashaEditor?.subscribe?.(() => {
       syncEditModeUi();
-      if (typeof window.renderMealDetail === "function" && window.state?.ration) {
-        window.renderMealDetail();
+      // Мягкое обновление ration-view без сброса скролла — полный rebuild делает sashaPitanieReload.
+      if (typeof window.softRefreshRationView === "function" && window.state?.ration) {
+        window.softRefreshRationView();
       }
     });
   }

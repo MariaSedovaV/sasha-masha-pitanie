@@ -1491,3 +1491,21 @@ html.is-mobile .ration-head-row{
 html.is-mobile .edit-toolbar .edit-action{
   flex:1 1 calc(50% - 6px)
 }
+
+/* Стабильнее тапы и меньше мигания картинок при мягких обновлениях */
+button, .pill, .ghost, .day-tab, .meal-btn, .heart-btn, .home-action, .ration-card{
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent
+}
+.meal-photo{
+  background:color-mix(in srgb, var(--card) 70%, #000);
+  overflow:hidden
+}
+.meal-photo img,
+.meal-btn img,
+.favorite-card img,
+.daily-meal img,
+.ration-card-media img{
+  content-visibility:auto;
+  background:color-mix(in srgb, var(--card) 80%, #1a1a1a)
+}
