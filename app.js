@@ -239,13 +239,55 @@ function clearRecipeSearch(){
   clearRecipeSearchSuggestions();
   closeAppDialog($('ingredientSearchDialog'));
 }
+function syncChromeHeight(){
+  const chrome = document.querySelector('.site-chrome');
+  if(!chrome) return;
+  document.documentElement.style.setProperty('--chrome-h', `${Math.ceil(chrome.getBoundingClientRect().height)}px`);
+}
+function syncSearchViewport(){
+  const vv = window.visualViewport;
+  if(!vv){
+    document.documentElement.style.setProperty('--vv-height', `${window.innerHeight}px`);
+    document.documentElement.style.setProperty('--vv-offset-top', '0px');
+    return;
+  }
+  document.documentElement.style.setProperty('--vv-height', `${Math.round(vv.height)}px`);
+  document.documentElement.style.setProperty('--vv-offset-top', `${Math.round(vv.offsetTop)}px`);
+}
+function bindSearchViewportSync(){
+  if(bindSearchViewportSync.bound) return;
+  bindSearchViewportSync.bound = true;
+  const refresh = () => {
+    syncChromeHeight();
+    if(document.documentElement.classList.contains('search-open')) syncSearchViewport();
+  };
+  window.addEventListener('resize', refresh, { passive: true });
+  window.addEventListener('orientationchange', () => setTimeout(refresh, 120));
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', refresh, { passive: true });
+    window.visualViewport.addEventListener('scroll', refresh, { passive: true });
+  }
+  syncChromeHeight();
+}
 function setRecipeSearchOpen(open){
   const wrap = $('recipeSearchWrap');
   const toggle = $('recipeSearchToggle');
+  const backdrop = $('recipeSearchBackdrop');
   if(!wrap) return;
+  const mobile = isMobileView();
   wrap.classList.toggle('is-open', open);
   toggle?.setAttribute('aria-expanded', String(open));
-  if(open) setTimeout(() => $('recipeSearch')?.focus(), 60);
+  if(backdrop){
+    if(open && mobile) backdrop.removeAttribute('hidden');
+    else backdrop.setAttribute('hidden', '');
+  }
+  document.documentElement.classList.toggle('search-open', open && mobile);
+  if(open && mobile){
+    bindSearchViewportSync();
+    syncChromeHeight();
+    syncSearchViewport();
+  }
+  if(open) setTimeout(() => $('recipeSearch')?.focus({ preventScroll: true }), 60);
 }
 function closeRecipeSearch(){
   clearRecipeSearch();
@@ -255,6 +297,7 @@ function closeRecipeSearch(){
 function submitIngredientSearch(){
   const input = $('recipeSearch');
   state.recipeSearchQuery = input?.value || '';
+  if(isMobileView()) setRecipeSearchOpen(false);
   renderIngredientSearchDialog();
 }
 function renderRecipeSearchSuggestions(){
@@ -582,6 +625,8 @@ function resolveRationId(id){
 }
 function openRation(id, dayIndex = 0, mealIndex = 0, options = {}){
   document.body.classList.remove('on-home');
+  setRecipeSearchOpen(false);
+  hideRecipeSearchPanel();
   const resolved = resolveRationId(id);
   state.ration = window.RATIONS.find(r => r.id === resolved || String(r.id) === String(resolved));
   if(!state.ration){
@@ -1027,11 +1072,18 @@ $('recipeSearchToggle')?.addEventListener('click', (e) => {
   if(isMobileView()){
     const open = !wrap?.classList.contains('is-open');
     setRecipeSearchOpen(open);
-    if(open) setTimeout(() => $('recipeSearch')?.focus(), 60);
   } else {
     revealRecipeSearchPanel();
     $('recipeSearch')?.focus();
   }
+});
+$('recipeSearchClose')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeRecipeSearch();
+});
+$('recipeSearchBackdrop')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeRecipeSearch();
 });
 document.addEventListener('click', (e) => {
   const wrap = $('recipeSearchWrap');
@@ -1048,7 +1100,11 @@ $('recipeSearch')?.addEventListener('input', () => {
 $('recipeSearch')?.addEventListener('keydown', (e) => {
   if(e.key === 'Escape') closeRecipeSearch();
 });
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && $('recipeSearchWrap')?.classList.contains('is-open')) closeRecipeSearch();
+});
 $('closeIngredientSearch')?.addEventListener('click', () => closeAppDialog($('ingredientSearchDialog')));
+bindSearchViewportSync();
 shoppingBtn.addEventListener('click', openShopping);
 $('closeShopping').addEventListener('click', () => closeAppDialog(dialog));
 $('pinRationBtn').addEventListener('click', pinSelectedRation);
